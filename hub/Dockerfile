@@ -11,6 +11,7 @@ COPY prisma ./prisma/
 RUN npx prisma generate
 
 COPY src ./src/
+COPY public ./public/
 
 EXPOSE 3000
 
