@@ -360,21 +360,28 @@
       log(`✓ Site URL: ${data.siteUrl}`, 'success');
       log('✓ GitHub Pages enabled — build starting…', 'success');
 
-      // Show success
-      document.querySelector('[data-step="2"]').classList.remove('active');
+      // Show success — hide everything else and scroll to top
+      document.querySelector('.wizard-header').style.display = 'none';
+      document.querySelector('.steps-indicator').style.display = 'none';
+      document.querySelectorAll('.step-card').forEach(c => c.classList.remove('active'));
       const result = document.getElementById('result-success');
       result.classList.add('active');
       document.getElementById('result-site-url').textContent = data.siteUrl;
       document.getElementById('link-site').href = data.siteUrl;
       document.getElementById('link-repo').href = data.repoUrl;
       document.getElementById('actions-link').href = data.repoUrl + '/actions';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
 
     } catch (err) {
       log(`✗ ${err.message}`, 'error');
-      document.querySelector('[data-step="2"]').classList.remove('active');
+      // Show error — hide everything else and scroll to top
+      document.querySelector('.wizard-header').style.display = 'none';
+      document.querySelector('.steps-indicator').style.display = 'none';
+      document.querySelectorAll('.step-card').forEach(c => c.classList.remove('active'));
       const errCard = document.getElementById('result-error');
       errCard.classList.add('active');
       document.getElementById('error-detail').textContent = err.message;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }
 </script>
