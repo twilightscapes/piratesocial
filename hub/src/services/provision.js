@@ -112,9 +112,12 @@ function customiseFile(path, contentBase64, settings) {
 
   let text = Buffer.from(contentBase64, 'base64').toString('utf-8');
 
-  const { username, displayName, bio, location, camera, siteTitle } = settings;
-  const siteUrl = `https://${username}.github.io`;
-  const repoName = `${username}/${username}.github.io`;
+  const { username, displayName, bio, location, camera, siteTitle, repoName } = settings;
+  const isUserSite = repoName === `${username}.github.io`;
+  const siteUrl = isUserSite
+    ? `https://${repoName}`
+    : `https://${username}.github.io/${repoName}`;
+  const fullRepoName = `${username}/${repoName}`;
 
   if (path === 'src/data/settings.json') {
     const current = JSON.parse(text);
@@ -137,7 +140,7 @@ function customiseFile(path, contentBase64, settings) {
   }
 
   if (path === 'public/admin/config.yml') {
-    text = text.replace(/repo:\s*.+/, `repo: ${repoName}`);
+    text = text.replace(/repo:\s*.+/, `repo: ${fullRepoName}`);
     text = text.replace(/site_url:\s*.+/, `site_url: ${siteUrl}`);
     text = text.replace(/display_url:\s*.+/, `display_url: ${siteUrl}`);
     text = text.replace(
@@ -156,7 +159,11 @@ export async function provisionNode(user, settings) {
   const token = user.githubToken;
   if (!token) throw new Error('No GitHub token — re-authenticate');
 
-  const repoName = `${user.username}.github.io`;
+  const repoName = settings.repoName || `${user.username}.github.io`;
+  const isUserSite = repoName === `${user.username}.github.io`;
+  const siteUrl = isUserSite
+    ? `https://${repoName}`
+    : `https://${user.username}.github.io/${repoName}`;
 
   console.log(`[provision] Starting for ${user.username} → ${repoName}`);
 
@@ -172,7 +179,7 @@ export async function provisionNode(user, settings) {
       body: JSON.stringify({
         name: repoName,
         description: `My photography site on Pirate Social`,
-        homepage: `https://${repoName}`,
+        homepage: siteUrl,
         auto_init: true,    // Creates initial commit so we can build a tree
         private: false,
       }),
@@ -201,6 +208,7 @@ export async function provisionNode(user, settings) {
         const { content: rawContent } = await fetchFileContent(file.sha, token);
         const customised = customiseFile(file.path, rawContent, {
           username: user.username,
+          repoName,
           displayName: settings.displayName || user.displayName || user.username,
           bio: settings.bio || user.bio || '',
           location: settings.location || '',
@@ -272,11 +280,11 @@ export async function provisionNode(user, settings) {
     console.warn(`[provision] Could not enable Pages (non-fatal):`, err.message);
   }
 
-  console.log(`[provision] ✅ Done! Site will be at https://${repoName}`);
+  console.log(`[provision] ✅ Done! Site will be at ${siteUrl}`);
 
   return {
     repoUrl: `https://github.com/${user.username}/${repoName}`,
-    siteUrl: `https://${repoName}`,
+    siteUrl,
     repoCreated,
     filesCount: treeEntries.length,
   };

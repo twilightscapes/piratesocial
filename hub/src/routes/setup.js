@@ -16,7 +16,7 @@ router.post('/provision', authenticate, async (req, res) => {
     });
   }
 
-  const { displayName, siteTitle, bio, location, camera } = req.body;
+  const { displayName, siteTitle, bio, location, camera, repoName } = req.body;
 
   try {
     const result = await provisionNode(user, {
@@ -25,6 +25,7 @@ router.post('/provision', authenticate, async (req, res) => {
       bio: bio || user.bio || '',
       location: location || user.location || '',
       camera: camera || user.camera || '',
+      repoName: repoName || `${user.username}.github.io`,
     });
 
     // Update user profile + mark node as created

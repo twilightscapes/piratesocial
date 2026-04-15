@@ -158,9 +158,13 @@
       <h2>Welcome, <span id="user-display" class="username"></span>!</h2>
     </div>
     <p class="subtitle" style="text-align:center; margin-top:12px;">
-      We'll create a repo called <strong><span id="repo-name"></span></strong> on your
-      GitHub account and set up your photography site.
+      We'll create a GitHub repository and set up your photography site.
     </p>
+    <div class="field" style="margin-top:20px;">
+      <label for="f-repo">Repository Name</label>
+      <input type="text" id="f-repo" placeholder="myusername.github.io" maxlength="100" />
+      <div class="hint">Your site will be at <strong><span id="site-url-preview"></span></strong></div>
+    </div>
     <div class="btn-row" style="justify-content:center">
       <button class="btn btn-primary" onclick="goStep(1)">Let's Go →</button>
     </div>
@@ -256,7 +260,16 @@
 
       document.getElementById('user-avatar').src = userData.avatarUrl || '';
       document.getElementById('user-display').textContent = userData.displayName || userData.username;
-      document.getElementById('repo-name').textContent = `${userData.username}.github.io`;
+
+      // Default repo name
+      const defaultRepo = `${userData.username}.github.io`;
+      const repoInput = document.getElementById('f-repo');
+      repoInput.value = defaultRepo;
+      updateSitePreview();
+
+      // Update preview when repo name changes
+      repoInput.addEventListener('input', updateSitePreview);
+
       document.getElementById('f-name').value = userData.displayName || '';
       document.getElementById('f-bio').value = userData.bio || '';
       document.getElementById('f-location').value = userData.location || '';
@@ -268,6 +281,16 @@
       location.href = '/api/auth/github';
     }
   })();
+
+  function updateSitePreview() {
+    const repo = document.getElementById('f-repo').value.trim();
+    const preview = document.getElementById('site-url-preview');
+    if (repo.endsWith('.github.io')) {
+      preview.textContent = `https://${repo}`;
+    } else {
+      preview.textContent = `https://${userData.username}.github.io/${repo}`;
+    }
+  }
 
   function goStep(step) {
     // Update dots
@@ -298,7 +321,15 @@
   }
 
   async function startProvisioning() {
+    const repoName = document.getElementById('f-repo').value.trim();
+    if (!repoName) {
+      alert('Please enter a repository name');
+      goStep(0);
+      return;
+    }
+
     const settings = {
+      repoName,
       displayName: document.getElementById('f-name').value.trim() || userData.username,
       siteTitle: document.getElementById('f-title').value.trim() || '',
       bio: document.getElementById('f-bio').value.trim() || '',
