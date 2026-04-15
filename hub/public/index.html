@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pirate Social — Distributed Photography Network</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0a0a0a; --surface: #141414; --border: #262626; --text: #e5e5e5;
+      --muted: #a3a3a3; --accent: #3b82f6; --accent-hover: #2563eb;
+      --green: #22c55e; --red: #ef4444;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg); color: var(--text); line-height: 1.6;
+      min-height: 100vh;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code {
+      background: #1e1e1e; padding: 2px 6px; border-radius: 4px;
+      font-size: 0.9em; font-family: 'SF Mono', 'Fira Code', monospace;
+    }
+    pre {
+      background: #1e1e1e; padding: 16px; border-radius: 8px;
+      overflow-x: auto; font-size: 0.85em; line-height: 1.5;
+      font-family: 'SF Mono', 'Fira Code', monospace; color: #d4d4d4;
+      border: 1px solid var(--border);
+    }
+
+    /* Layout */
+    .container { max-width: 760px; margin: 0 auto; padding: 0 20px; }
+
+    /* Hero */
+    .hero {
+      text-align: center; padding: 80px 20px 60px;
+      background: linear-gradient(180deg, #111 0%, var(--bg) 100%);
+      border-bottom: 1px solid var(--border);
+    }
+    .hero-flag { font-size: 64px; margin-bottom: 16px; }
+    .hero h1 { font-size: 2.5em; font-weight: 800; letter-spacing: -0.02em; }
+    .hero p { color: var(--muted); font-size: 1.15em; max-width: 540px; margin: 12px auto 0; }
+
+    /* Feature pills */
+    .features {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      justify-content: center; margin-top: 28px;
+    }
+    .pill {
+      background: var(--surface); border: 1px solid var(--border);
+      padding: 6px 14px; border-radius: 20px; font-size: 0.85em; color: var(--muted);
+    }
+
+    /* CTA */
+    .cta-row {
+      display: flex; gap: 12px; justify-content: center;
+      margin-top: 36px; flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 24px; border-radius: 8px; font-size: 1em;
+      font-weight: 600; cursor: pointer; border: none; transition: all 0.15s;
+    }
+    .btn-primary { background: var(--accent); color: white; }
+    .btn-primary:hover { background: var(--accent-hover); text-decoration: none; }
+    .btn-secondary {
+      background: transparent; color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover { border-color: var(--muted); text-decoration: none; }
+
+    /* Steps */
+    .steps { padding: 60px 0; }
+    .steps > h2 { font-size: 1.6em; margin-bottom: 40px; text-align: center; }
+    .step {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 28px 32px; margin-bottom: 20px;
+      position: relative;
+    }
+    .step-number {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 28px; height: 28px; border-radius: 50%;
+      background: var(--accent); color: white; font-size: 0.8em;
+      font-weight: 700; margin-right: 12px; flex-shrink: 0;
+    }
+    .step h3 {
+      display: inline; font-size: 1.15em; vertical-align: middle;
+    }
+    .step p { color: var(--muted); margin-top: 12px; }
+    .step .note {
+      margin-top: 12px; padding: 12px 16px;
+      background: rgba(59,130,246,0.08); border-left: 3px solid var(--accent);
+      border-radius: 0 6px 6px 0; font-size: 0.9em; color: var(--muted);
+    }
+    .step pre { margin-top: 16px; }
+    .step .time {
+      position: absolute; top: 28px; right: 32px;
+      font-size: 0.8em; color: var(--muted); background: var(--bg);
+      padding: 2px 10px; border-radius: 12px;
+    }
+
+    /* How it works */
+    .how-it-works {
+      padding: 40px 0 60px; border-top: 1px solid var(--border);
+    }
+    .how-it-works h2 { font-size: 1.6em; margin-bottom: 24px; text-align: center; }
+    .how-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px; margin-top: 24px;
+    }
+    .how-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 24px; text-align: center;
+    }
+    .how-card .icon { font-size: 2em; margin-bottom: 12px; }
+    .how-card h3 { font-size: 1em; margin-bottom: 8px; }
+    .how-card p { font-size: 0.85em; color: var(--muted); }
+
+    /* Network status */
+    .status {
+      text-align: center; padding: 40px 0 60px;
+      border-top: 1px solid var(--border);
+    }
+    .status h2 { font-size: 1.4em; margin-bottom: 20px; }
+    .status-grid {
+      display: flex; gap: 24px; justify-content: center; flex-wrap: wrap;
+    }
+    .stat {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 20px 32px; text-align: center;
+    }
+    .stat .num { font-size: 2em; font-weight: 800; color: var(--accent); }
+    .stat .label { color: var(--muted); font-size: 0.85em; margin-top: 4px; }
+
+    /* Directory */
+    .directory { padding: 0 0 60px; }
+    .directory h2 { font-size: 1.4em; margin-bottom: 20px; text-align: center; }
+    .node-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap: 12px; }
+    .node-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 16px; display: flex; align-items: center; gap: 12px;
+    }
+    .node-card img {
+      width: 40px; height: 40px; border-radius: 50%;
+      object-fit: cover; background: var(--border);
+    }
+    .node-card .info { flex: 1; min-width: 0; }
+    .node-card .name { font-weight: 600; font-size: 0.95em; }
+    .node-card .url {
+      font-size: 0.8em; color: var(--muted);
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border); padding: 32px 0;
+      text-align: center; color: var(--muted); font-size: 0.85em;
+    }
+
+    @media (max-width: 600px) {
+      .hero { padding: 50px 16px 40px; }
+      .hero h1 { font-size: 1.8em; }
+      .step { padding: 20px; }
+      .step .time { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-flag">🏴‍☠️</div>
+    <h1>Pirate Social</h1>
+    <p>A distributed photography network. Own your content, host your own site, connect with everyone.</p>
+    <div class="features">
+      <span class="pill">📷 Photography-first</span>
+      <span class="pill">🌐 Self-hosted nodes</span>
+      <span class="pill">📡 RSS-powered feeds</span>
+      <span class="pill">🦋 Bluesky integration</span>
+      <span class="pill">✍️ Built-in CMS</span>
+      <span class="pill">🔓 No algorithms</span>
+    </div>
+    <div class="cta-row">
+      <a href="#steps" class="btn btn-primary">
+        🚀 Create Your Node
+      </a>
+      <a href="#how-it-works" class="btn btn-secondary">How it Works</a>
+    </div>
+  </section>
+
+  <!-- Setup Steps -->
+  <section class="steps container" id="steps">
+    <h2>Get Your Node Running in 3 Steps</h2>
+
+    <div class="step">
+      <span class="time">~2 min</span>
+      <span class="step-number">1</span>
+      <h3>Create Your Site</h3>
+      <p>
+        Open a terminal and run this command.
+        Replace <code>yourusername</code> with your GitHub username:
+      </p>
+      <pre>npx degit twilightscapes/piratesocial/node-template yourusername.github.io
+cd yourusername.github.io
+npm install
+npm run setup</pre>
+      <p>The setup wizard asks for your name, bio, and camera — then configures
+        your site URL, CMS, hub connection, and deploy settings automatically.</p>
+      <div class="note">
+        💡 Need Node.js? <a href="https://nodejs.org" target="_blank">Install v18+</a> first.
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="time">~1 min</span>
+      <span class="step-number">2</span>
+      <h3>Push to GitHub</h3>
+      <p>Create a new repo on GitHub named <code>yourusername.github.io</code>, then push:</p>
+      <pre>git init && git add -A && git commit -m "My pirate node"
+git remote add origin https://github.com/yourusername/yourusername.github.io.git
+git branch -M main && git push -u origin main</pre>
+      <div class="note">
+        ⚡ The repo <strong>must</strong> be named <code>yourusername.github.io</code>
+        for GitHub Pages to work automatically.
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="time">~1 min</span>
+      <span class="step-number">3</span>
+      <h3>Enable GitHub Pages &amp; Sign In</h3>
+      <p>In your GitHub repo:</p>
+      <p style="margin-top:8px;">
+        <strong>Settings → Pages → Source:</strong> select <strong>"GitHub Actions"</strong>
+      </p>
+      <p style="margin-top:12px;">
+        Wait for the first deploy (check the Actions tab). Once live, visit
+        <code>https://yourusername.github.io</code> and click
+        <strong>"Sign In"</strong> to join the network.
+      </p>
+      <div class="note">
+        ✍️ Manage your posts at <code>yourusername.github.io/admin</code> — no coding needed.
+      </div>
+    </div>
+  </section>
+
+  <!-- How it Works -->
+  <section class="how-it-works container" id="how-it-works">
+    <h2>How Pirate Social Works</h2>
+    <div class="how-grid">
+      <div class="how-card">
+        <div class="icon">🏠</div>
+        <h3>Your Own Site</h3>
+        <p>Each member hosts their own photography site on GitHub Pages — free, fast, and fully yours.</p>
+      </div>
+      <div class="how-card">
+        <div class="icon">📡</div>
+        <h3>RSS Federation</h3>
+        <p>Sites publish RSS feeds. The hub aggregates them into a shared timeline — no centralized database for your content.</p>
+      </div>
+      <div class="how-card">
+        <div class="icon">🤝</div>
+        <h3>Social Hub</h3>
+        <p>Likes, comments, and follows are coordinated through this hub. Your posts stay on your site.</p>
+      </div>
+      <div class="how-card">
+        <div class="icon">🦋</div>
+        <h3>Bluesky Bridge</h3>
+        <p>Optionally cross-post to Bluesky. Comments from both networks appear together on your site.</p>
+      </div>
+      <div class="how-card">
+        <div class="icon">✍️</div>
+        <h3>Built-in CMS</h3>
+        <p>Write posts with Decap CMS — a visual editor right in your browser, backed by git.</p>
+      </div>
+      <div class="how-card">
+        <div class="icon">📷</div>
+        <h3>EXIF &amp; Galleries</h3>
+        <p>Automatic camera data extraction, photo galleries, and slideshows built in.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Network Status -->
+  <section class="status container">
+    <h2>Network Status</h2>
+    <div class="status-grid">
+      <div class="stat">
+        <div class="num" id="node-count">—</div>
+        <div class="label">Nodes</div>
+      </div>
+      <div class="stat">
+        <div class="num" id="post-count">—</div>
+        <div class="label">Total Posts</div>
+      </div>
+      <div class="stat">
+        <div class="num" id="uptime">✓</div>
+        <div class="label">Hub Online</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Directory -->
+  <section class="directory container">
+    <h2>Active Nodes</h2>
+    <div class="node-list" id="node-list">
+      <p style="color: var(--muted); text-align:center; grid-column: 1/-1;">Loading nodes…</p>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p>Pirate Social — Open source, distributed, no algorithms.</p>
+      <p style="margin-top:8px;">
+        <a href="https://github.com/twilightscapes/piratesocial" target="_blank">GitHub</a>
+        &nbsp;·&nbsp;
+        <a href="/api/directory/nodes.json">API</a>
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    // Load network stats and directory
+    (async () => {
+      try {
+        const [dirRes] = await Promise.all([
+          fetch('/api/directory?limit=50'),
+        ]);
+
+        if (dirRes.ok) {
+          const dir = await dirRes.json();
+          const nodes = dir.users || dir;
+
+          document.getElementById('node-count').textContent = Array.isArray(nodes) ? nodes.length : '—';
+
+          // Render node cards
+          const list = document.getElementById('node-list');
+          if (Array.isArray(nodes) && nodes.length > 0) {
+            list.innerHTML = nodes.map(n => `
+              <a href="${esc(n.siteUrl || '#')}" class="node-card" target="_blank" style="text-decoration:none;color:inherit;">
+                <img src="${esc(n.avatarUrl || '')}" alt="" onerror="this.style.display='none'" />
+                <div class="info">
+                  <div class="name">${esc(n.displayName || n.username)}</div>
+                  <div class="url">${esc(n.siteUrl || '')}</div>
+                </div>
+              </a>
+            `).join('');
+          } else {
+            list.innerHTML = '<p style="color:var(--muted);text-align:center;grid-column:1/-1;">No nodes yet — be the first!</p>';
+          }
+
+          // Count posts
+          let postTotal = 0;
+          if (Array.isArray(nodes)) {
+            nodes.forEach(n => { postTotal += n._count?.posts || 0; });
+          }
+          document.getElementById('post-count').textContent = postTotal || '—';
+        }
+      } catch (e) {
+        console.warn('Failed to load directory:', e);
+      }
+    })();
+
+    function esc(s) {
+      const d = document.createElement('div');
+      d.textContent = s || '';
+      return d.innerHTML;
+    }
+  </script>
+</body>
+</html>

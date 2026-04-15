@@ -16,6 +16,15 @@ const { postSlug } = Astro.props;
     <button class="comment-toggle hover:text-blue-400 transition cursor-pointer" data-slug={postSlug}>
       💬 <span class="comment-count">0</span> Comments
     </button>
+    <a class="bsky-link hidden text-blue-400 hover:text-blue-300 transition text-xs" data-slug={postSlug} href="#" target="_blank" rel="noopener">
+      View on Bluesky ↗
+    </a>
+  </div>
+
+  <!-- Bluesky stats -->
+  <div class="bsky-stats hidden mt-2 text-xs text-zinc-500" data-slug={postSlug}>
+    <span class="bsky-likes"></span>
+    <span class="bsky-reposts ml-2"></span>
   </div>
 
   <!-- Comments section (hidden by default) -->
@@ -36,27 +45,240 @@ const { postSlug } = Astro.props;
 </div>
 
 <script is:inline define:vars={{ hubUrl: siteConfig.hubUrl }}>
-  // This runs per-post — interactions are client-side against the hub API
+(function() {
+  const postStates = {};
+
+  function getToken() {
+    return localStorage.getItem('ps_token');
+  }
+
+  // Resolve slug to postId + bluesky data via hub
+  async function resolvePost(slug) {
+    if (postStates[slug]) return postStates[slug];
+    try {
+      // Construct a guid that matches what the aggregator stores
+      // The guid is typically the full URL: siteUrl + /posts/ + slug
+      const guids = [
+        slug,
+        `${window.location.origin}/posts/${slug}/`,
+        `${window.location.origin}/posts/${slug}`,
+      ];
+
+      let data = null;
+      for (const guid of guids) {
+        const res = await fetch(`${hubUrl}/api/feed/by-guid/${encodeURIComponent(guid)}`);
+        if (res.ok) {
+          data = await res.json();
+          break;
+        }
+      }
+
+      if (data) {
+        postStates[slug] = data;
+        return data;
+      }
+    } catch (e) {
+      console.warn('Could not resolve post:', e);
+    }
+    return null;
+  }
+
+  // Load merged comments (Pirate Social + Bluesky)
+  async function loadComments(slug) {
+    const post = await resolvePost(slug);
+    if (!post) return;
+
+    try {
+      const res = await fetch(`${hubUrl}/api/bluesky/thread/${post.id}`);
+      if (!res.ok) return;
+      const data = await res.json();
+
+      // Update counts
+      const container = document.getElementById(`social-${slug}`);
+      if (!container) return;
+
+      const commentCount = container.querySelector('.comment-count');
+      commentCount.textContent = data.comments.length;
+
+      const likeCount = container.querySelector('.like-count');
+      likeCount.textContent = data.likeCount + (data.bskyLikeCount || 0);
+
+      // Show Bluesky link if available
+      if (data.bskyUrl) {
+        const bskyLink = container.querySelector('.bsky-link');
+        bskyLink.href = data.bskyUrl;
+        bskyLink.classList.remove('hidden');
+      }
+
+      // Show Bluesky stats
+      if (data.bskyLikeCount > 0 || data.bskyRepostCount > 0) {
+        const stats = container.querySelector('.bsky-stats');
+        stats.classList.remove('hidden');
+        stats.querySelector('.bsky-likes').textContent = data.bskyLikeCount > 0 ? `🦋 ${data.bskyLikeCount} likes` : '';
+        stats.querySelector('.bsky-reposts').textContent = data.bskyRepostCount > 0 ? `🔁 ${data.bskyRepostCount} reposts` : '';
+      }
+
+      // Render comments
+      const list = container.querySelector('.comments-list');
+      list.innerHTML = '';
+
+      if (data.comments.length === 0) {
+        list.innerHTML = '<p class="text-sm text-zinc-500 italic">No comments yet</p>';
+        return;
+      }
+
+      data.comments.forEach(c => {
+        const div = document.createElement('div');
+        div.className = 'flex gap-3 text-sm';
+        if (c.depth > 0) div.style.marginLeft = `${c.depth * 1.5}rem`;
+
+        const sourceIcon = c.source === 'bluesky' ? '🦋' : '🏴‍☠️';
+        const avatar = c.author.avatar
+          ? `<img src="${c.author.avatar}" alt="" class="w-6 h-6 rounded-full flex-shrink-0" />`
+          : `<div class="w-6 h-6 rounded-full bg-zinc-700 flex-shrink-0"></div>`;
+
+        const time = new Date(c.createdAt).toLocaleDateString('en-US', {
+          month: 'short', day: 'numeric',
+        });
+
+        div.innerHTML = `
+          ${avatar}
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2">
+              <span class="font-medium text-zinc-300">${escapeHtml(c.author.displayName || c.author.handle)}</span>
+              <span class="text-zinc-600 text-xs">${sourceIcon}</span>
+              <span class="text-zinc-600 text-xs">${time}</span>
+            </div>
+            <p class="text-zinc-400 mt-0.5 break-words">${escapeHtml(c.text)}</p>
+          </div>
+        `;
+        list.appendChild(div);
+      });
+
+      // Store blueskyUri for like bridge
+      post.blueskyUri = data.blueskyUri;
+    } catch (e) {
+      console.warn('Failed to load comments:', e);
+    }
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str || '';
+    return div.innerHTML;
+  }
+
+  // Toggle comments
   document.querySelectorAll('.comment-toggle').forEach(btn => {
     btn.addEventListener('click', () => {
       const slug = btn.dataset.slug;
       const section = document.querySelector(`.comments-section[data-slug="${slug}"]`);
+      const wasHidden = section.classList.contains('hidden');
       section.classList.toggle('hidden');
+      if (wasHidden) loadComments(slug);
     });
   });
 
+  // Like action
+  document.querySelectorAll('.like-action').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const token = getToken();
+      if (!token) return alert('Sign in to like posts');
+
+      const slug = btn.dataset.slug;
+      const post = await resolvePost(slug);
+      if (!post) return alert('Post not found in hub');
+
+      try {
+        const res = await fetch(`${hubUrl}/api/interactions/like`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ postId: post.id }),
+        });
+
+        if (res.status === 409) {
+          // Already liked — unlike
+          const ures = await fetch(`${hubUrl}/api/interactions/like`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+            body: JSON.stringify({ postId: post.id }),
+          });
+          if (ures.ok) {
+            const data = await ures.json();
+            btn.querySelector('.like-count').textContent = data.count;
+            btn.innerHTML = `♡ <span class="like-count">${data.count}</span>`;
+          }
+          return;
+        }
+
+        if (res.ok) {
+          const data = await res.json();
+          btn.innerHTML = `♥ <span class="like-count">${data.count}</span>`;
+          btn.classList.add('text-red-400');
+
+          // Bridge like to Bluesky
+          fetch(`${hubUrl}/api/bluesky/like-bridge/${post.id}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          }).catch(() => {});
+        }
+      } catch (e) {
+        console.warn('Like failed:', e);
+      }
+    });
+  });
+
+  // Comment submit
   document.querySelectorAll('.comment-submit').forEach(btn => {
     btn.addEventListener('click', async () => {
-      const token = localStorage.getItem('ps_token');
+      const token = getToken();
       if (!token) return alert('Sign in to comment');
 
       const input = btn.previousElementSibling;
       const body = input.value.trim();
       if (!body) return;
 
-      // We'd need to map slug → postId via hub API
-      // For now, this shows the interaction pattern
-      input.value = '';
+      const slug = input.closest('.comments-section').dataset.slug;
+      const post = await resolvePost(slug);
+      if (!post) return alert('Post not found in hub');
+
+      try {
+        // Post comment to Pirate Social
+        const res = await fetch(`${hubUrl}/api/interactions/comment`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ postId: post.id, body }),
+        });
+
+        if (res.ok) {
+          input.value = '';
+
+          // Also bridge to Bluesky if post is cross-posted
+          if (post.blueskyUri) {
+            fetch(`${hubUrl}/api/bluesky/reply/${post.id}`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+              body: JSON.stringify({ text: body }),
+            }).catch(() => {});
+          }
+
+          // Refresh comments
+          loadComments(slug);
+        }
+      } catch (e) {
+        console.warn('Comment failed:', e);
+      }
     });
   });
+
+  // Auto-load comment counts on page load
+  document.querySelectorAll('.like-action').forEach(btn => {
+    const slug = btn.dataset.slug;
+    resolvePost(slug).then(post => {
+      if (post) {
+        btn.querySelector('.like-count').textContent = post._count?.likes || 0;
+      }
+    });
+  });
+})();
 </script>

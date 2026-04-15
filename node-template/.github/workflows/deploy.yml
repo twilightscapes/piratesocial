@@ -28,6 +28,8 @@ jobs:
         run: npm install
 
       - name: Build site
+        env:
+          SITE_URL: https://${{ github.repository_owner }}.github.io
         run: npm run build
 
       - name: Upload artifact

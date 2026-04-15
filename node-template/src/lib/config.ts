@@ -9,7 +9,7 @@ export const siteConfig = {
   avatar: settings.avatar || '/images/avatar.jpg',
   location: settings.location || '',
   camera: settings.camera || '',
-  siteUrl: 'https://twilightscapes.github.io',
+  siteUrl: settings.github ? `https://${settings.github}.github.io` : 'https://twilightscapes.github.io',
   hubUrl: 'https://piratesocial-hub-production.up.railway.app',
   social: {
     github: settings.github || 'twilightscapes',

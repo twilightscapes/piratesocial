@@ -5,6 +5,8 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import cron from 'node-cron';
 import { PrismaClient } from '@prisma/client';
+import { fileURLToPath } from 'url';
+import path from 'path';
 
 import authRoutes from './routes/auth.js';
 import userRoutes from './routes/users.js';
@@ -17,6 +19,8 @@ import directoryRoutes from './routes/directory.js';
 import decapRoutes from './routes/decap.js';
 import blueskyRoutes from './routes/bluesky.js';
 import { aggregateAllFeeds } from './services/aggregator.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const app = express();
 const prisma = new PrismaClient();
@@ -55,23 +59,8 @@ app.use(limiter);
 app.locals.prisma = prisma;
 
 // --- Routes ---
-app.get('/', (_req, res) => {
-  res.json({
-    name: 'Pirate Social Hub',
-    version: '1.0.0',
-    description: 'Distributed photography social network hub',
-    endpoints: {
-      auth: '/api/auth',
-      users: '/api/users',
-      timeline: '/api/timeline',
-      feed: '/api/feed',
-      interactions: '/api/interactions',
-      directory: '/api/directory',
-      webhooks: '/api/webhooks',
-      bluesky: '/api/bluesky',
-    },
-  });
-});
+// Serve landing page
+app.use(express.static(path.join(__dirname, '..', 'public')));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);

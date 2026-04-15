@@ -5,7 +5,7 @@ import sitemap from '@astrojs/sitemap';
 import tailwind from '@astrojs/tailwind';
 
 export default defineConfig({
-  site: 'https://twilightscapes.github.io',
+  site: process.env.SITE_URL || 'https://twilightscapes.github.io',
   integrations: [mdx(), sitemap(), tailwind()],
   output: 'static',
   build: {
