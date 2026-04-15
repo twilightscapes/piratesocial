@@ -25,7 +25,7 @@ export const siteConfig = {
   siteUrl: 'https://YOUR_USERNAME.github.io',
 
   /** Pirate Social hub URL */
-  hubUrl: 'https://your-hub.railway.app',
+  hubUrl: 'https://piratesocial-hub-production.up.railway.app',
 
   /** Social links */
   social: {

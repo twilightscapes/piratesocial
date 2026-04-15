@@ -55,7 +55,7 @@ jobs:
       - name: Notify Pirate Social Hub
         run: |
           # Read hub URL from config (fallback to env var)
-          HUB_URL="${{ vars.PIRATE_SOCIAL_HUB_URL || 'https://your-hub.railway.app' }}"
+          HUB_URL="${{ vars.PIRATE_SOCIAL_HUB_URL || 'https://piratesocial-hub-production.up.railway.app' }}"
           GITHUB_USER="${{ github.repository_owner }}"
 
           curl -s -X POST "${HUB_URL}/api/webhooks/feed-updated" \

@@ -2,7 +2,7 @@ backend:
   name: github
   repo: YOUR_USERNAME/YOUR_REPO   # Replace with your GitHub repo
   branch: main
-  base_url: https://your-hub.railway.app  # Hub provides OAuth proxy
+  base_url: https://piratesocial-hub-production.up.railway.app  # Hub provides OAuth proxy
   auth_endpoint: /api/auth/github
 
 media_folder: public/images
