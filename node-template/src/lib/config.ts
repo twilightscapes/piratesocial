@@ -4,15 +4,15 @@ import settings from '../data/settings.json';
 export const siteConfig = {
   title: settings.title || 'My Photo Site',
   description: settings.description || 'A photography site on the Pirate Social network',
-  author: settings.author || 'Todd',
+  author: settings.author || 'Photographer',
   bio: settings.bio || 'I take photos of things.',
   avatar: settings.avatar || '/images/avatar.jpg',
   location: settings.location || '',
   camera: settings.camera || '',
-  siteUrl: settings.github ? `https://${settings.github}.github.io` : 'https://twilightscapes.github.io',
+  siteUrl: import.meta.env.SITE || (settings.github ? `https://${settings.github}.github.io` : ''),
   hubUrl: 'https://piratesocial-hub-production.up.railway.app',
   social: {
-    github: settings.github || 'twilightscapes',
+    github: settings.github || '',
     instagram: settings.instagram || '',
     mastodon: settings.mastodon || '',
   },
