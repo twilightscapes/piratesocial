@@ -9,7 +9,7 @@ on:
     - cron: '0 6 * * 1'
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -68,14 +68,29 @@ jobs:
             cp user-repo/package.json build/package.json
           fi
           
-          # Preserve user's astro.config (has their site URL)
-          if [ -f user-repo/astro.config.mjs ]; then
-            cp user-repo/astro.config.mjs build/astro.config.mjs
-          fi
+          # NOTE: astro.config.mjs is NOT copied from user repo.
+          # The template version handles SITE_URL and BASE_PATH via env vars.
           
           echo "✅ Merged template + user content"
           echo "Template files from: twilightscapes/piratesocial/node-template"
           echo "User content from: ${{ github.repository }}"
+
+      - name: Self-update workflow
+        run: |
+          TEMPLATE_WF="template-source/node-template/.github/workflows/deploy.yml"
+          USER_WF="user-repo/.github/workflows/deploy.yml"
+          if ! diff -q "$TEMPLATE_WF" "$USER_WF" > /dev/null 2>&1; then
+            echo "🔄 Workflow updated from template"
+            cp "$TEMPLATE_WF" "$USER_WF"
+            cd user-repo
+            git config user.email "piratesocial[bot]@users.noreply.github.com"
+            git config user.name "Pirate Social Bot"
+            git add .github/workflows/deploy.yml
+            git commit -m "chore: auto-update deploy workflow from template"
+            git push
+          else
+            echo "✅ Workflow is up to date"
+          fi
 
       - uses: actions/setup-node@v4
         with:
