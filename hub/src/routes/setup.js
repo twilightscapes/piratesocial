@@ -49,6 +49,23 @@ router.post('/provision', authenticate, async (req, res) => {
   }
 });
 
+// Admin: reset nodeCreated so user can re-provision
+router.post('/reset', authenticate, async (req, res) => {
+  const prisma = req.app.locals.prisma;
+  const admin = await prisma.user.findUnique({ where: { id: req.user.id } });
+  if (!admin?.isAdmin) return res.status(403).json({ error: 'Admin only' });
+
+  const { username } = req.body;
+  if (!username) return res.status(400).json({ error: 'username required' });
+
+  await prisma.user.updateMany({
+    where: { username },
+    data: { nodeCreated: false },
+  });
+
+  res.json({ ok: true, message: `${username} can re-provision` });
+});
+
 // Check if the user's node is already set up
 router.get('/status', authenticate, async (req, res) => {
   const prisma = req.app.locals.prisma;
