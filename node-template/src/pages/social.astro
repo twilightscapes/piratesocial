@@ -177,8 +177,8 @@ import { siteConfig } from '../lib/config';
           ${primaryImage ? `<img src="${escapeHtml(primaryImage)}" alt="${escapeHtml(embed.images?.[0]?.alt || post.title)}" class="w-full aspect-[16/9] object-cover" loading="lazy" onerror="this.style.display='none'" />` : ''}
           <div class="p-4">
             <div class="mb-3">${authorHtml}</div>
-            <h3 class="font-semibold"><a href="${escapeHtml(post.link)}" target="_blank" class="hover:underline">${escapeHtml(post.title)}</a></h3>
-            ${post.description && post.description !== post.title ? `<p class="mt-1 text-sm text-zinc-400 line-clamp-3">${escapeHtml(post.description)}</p>` : ''}
+            <h3 class="font-semibold"><a href="${escapeHtml(post.link)}" target="_blank" class="hover:underline">${formatText(post.title)}</a></h3>
+            ${post.description && post.description !== post.title ? `<p class="mt-1 text-sm text-zinc-400">${formatText(post.description)}</p>` : ''}
             ${embedHtml}
             ${post.exifData ? `<div class="mt-2 text-xs text-zinc-500">${formatExif(post.exifData)}</div>` : ''}
             <div class="mt-3 flex items-center gap-4 text-sm text-zinc-400">
@@ -273,6 +273,13 @@ import { siteConfig } from '../lib/config';
     const div = document.createElement('div');
     div.textContent = str;
     return div.innerHTML;
+  }
+
+  function formatText(str) {
+    if (!str) return '';
+    // Strip Bluesky embed placeholders
+    let text = str.replace(/\[contains quote post or other embedded content\]/gi, '').trim();
+    return escapeHtml(text).replace(/\n/g, '<br>');
   }
 
   // Load more
