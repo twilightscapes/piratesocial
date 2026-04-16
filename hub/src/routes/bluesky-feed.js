@@ -14,7 +14,7 @@ router.get('/proxy/timeline', async (req, res) => {
   try {
     const limit = Math.min(parseInt(req.query.limit) || 30, 100);
     const cursor = req.query.cursor;
-    let apiUrl = `https://bsky.social/xrpc/app.bsky.feed.getTimeline?limit=${limit}`;
+    let apiUrl = `https://api.bsky.app/xrpc/app.bsky.feed.getTimeline?limit=${limit}`;
     if (cursor) apiUrl += `&cursor=${encodeURIComponent(cursor)}`;
 
     console.log('[proxy/timeline] Fetching from bsky.social...');
