@@ -24,8 +24,9 @@ router.get('/proxy/timeline', async (req, res) => {
     console.log('[proxy/timeline] bsky.social responded:', response.status);
 
     if (!response.ok) {
-      const err = await response.json().catch(() => ({}));
-      return res.status(response.status).json({ error: err.message || `Bluesky API error ${response.status}` });
+      const errText = await response.text().catch(() => '');
+      console.error('[proxy/timeline] bsky.social error body:', errText);
+      return res.status(response.status).json({ error: errText || `Bluesky API error ${response.status}` });
     }
 
     const data = await response.json();

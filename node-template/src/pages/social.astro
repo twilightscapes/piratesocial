@@ -181,6 +181,8 @@ import { siteConfig } from '../lib/config';
             renderBskyPosts({ posts, cursor: raw.cursor || null }, append);
             return;
           }
+          const errBody = await res.text().catch(() => '');
+          console.error('[PS] Proxy error body:', errBody);
           // If 401/expired, refresh and retry once
           if (res.status === 401 || res.status === 400) {
             console.log('[PS] Token expired, refreshing...');
