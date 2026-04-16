@@ -283,13 +283,17 @@ export async function aggregateExternalFeed(prisma, feed) {
 
     const tags = extractTagsFromItem(item);
 
+    const rawDesc = stripHtml(item.description || item.summary || '');
+    // Use description preview as title for title-less posts (e.g. Bluesky)
+    const title = item.title || (rawDesc ? rawDesc.slice(0, 120) + (rawDesc.length > 120 ? '…' : '') : 'Untitled');
+
     try {
       await prisma.externalPost.create({
         data: {
           feedId: feed.id,
           guid,
-          title: item.title || 'Untitled',
-          description: stripHtml(item.description || item.summary || ''),
+          title,
+          description: rawDesc,
           content: item['content:encoded'] || item.content?.['#text'] || item.content || '',
           link: item.link?.['@_href'] || item.link || '',
           pubDate: parseDate(item.pubDate || item.published || item.updated),
