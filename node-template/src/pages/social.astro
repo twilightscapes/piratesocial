@@ -124,13 +124,62 @@ import { siteConfig } from '../lib/config';
             </button>
             ${post.link ? `<a href="${escapeHtml(post.link)}" target="_blank" class="hover:text-white ml-auto">↗ View</a>` : ''}`;
 
+      // Build embed HTML for rich content (Bluesky images, videos, link cards, quotes)
+      const embed = post.embedData || {};
+      let embedHtml = '';
+
+      // Multiple images (gallery grid)
+      if (embed.images?.length > 1) {
+        embedHtml += `<div class="grid grid-cols-2 gap-1 mt-2 rounded overflow-hidden">
+          ${embed.images.map(img => `<img src="${escapeHtml(img.fullsize || img.thumb)}" alt="${escapeHtml(img.alt)}" class="w-full object-cover aspect-square" loading="lazy" onerror="this.style.display='none'" />`).join('')}
+        </div>`;
+      }
+
+      // Video
+      if (embed.video?.playlist) {
+        embedHtml += `<div class="mt-2 rounded overflow-hidden bg-black aspect-video relative">
+          <video controls preload="none" poster="${escapeHtml(embed.video.thumb || '')}" class="w-full h-full">
+            <source src="${escapeHtml(embed.video.playlist)}" type="application/x-mpegURL" />
+          </video>
+        </div>`;
+      }
+
+      // External link card
+      if (embed.external?.uri) {
+        embedHtml += `<a href="${escapeHtml(embed.external.uri)}" target="_blank" rel="noopener noreferrer" class="mt-2 block rounded border border-zinc-700 overflow-hidden hover:border-zinc-500 transition">
+          ${embed.external.thumb ? `<img src="${escapeHtml(embed.external.thumb)}" alt="" class="w-full aspect-[2/1] object-cover" loading="lazy" onerror="this.style.display='none'" />` : ''}
+          <div class="p-3">
+            <div class="text-sm font-medium text-zinc-200 line-clamp-1">${escapeHtml(embed.external.title || '')}</div>
+            ${embed.external.description ? `<div class="text-xs text-zinc-500 mt-1 line-clamp-2">${escapeHtml(embed.external.description)}</div>` : ''}
+            <div class="text-xs text-zinc-600 mt-1">${escapeHtml(new URL(embed.external.uri).hostname)}</div>
+          </div>
+        </a>`;
+      }
+
+      // Quote post
+      if (embed.quote?.text) {
+        embedHtml += `<div class="mt-2 rounded border border-zinc-700 p-3 bg-zinc-800/50">
+          <div class="text-xs text-zinc-400 mb-1">
+            <span class="font-medium text-zinc-300">${escapeHtml(embed.quote.author)}</span>
+            <span class="text-zinc-500 ml-1">@${escapeHtml(embed.quote.handle)}</span>
+          </div>
+          <p class="text-sm text-zinc-300 line-clamp-4">${escapeHtml(embed.quote.text)}</p>
+        </div>`;
+      }
+
+      // Primary image: use single embed image or imageUrl (skip if we showed a gallery above)
+      const primaryImage = (embed.images?.length === 1)
+        ? embed.images[0].fullsize || embed.images[0].thumb
+        : (!embed.images?.length ? post.imageUrl : null);
+
       return `
         <article class="rounded-lg border border-zinc-800 bg-zinc-900 overflow-hidden">
-          ${post.imageUrl ? `<img src="${escapeHtml(post.imageUrl)}" alt="${escapeHtml(post.title)}" class="w-full aspect-[16/9] object-cover" loading="lazy" onerror="this.style.display='none'" />` : ''}
+          ${primaryImage ? `<img src="${escapeHtml(primaryImage)}" alt="${escapeHtml(embed.images?.[0]?.alt || post.title)}" class="w-full aspect-[16/9] object-cover" loading="lazy" onerror="this.style.display='none'" />` : ''}
           <div class="p-4">
             <div class="mb-3">${authorHtml}</div>
             <h3 class="font-semibold"><a href="${escapeHtml(post.link)}" target="_blank" class="hover:underline">${escapeHtml(post.title)}</a></h3>
-            ${post.description ? `<p class="mt-1 text-sm text-zinc-400 line-clamp-3">${escapeHtml(post.description)}</p>` : ''}
+            ${post.description && post.description !== post.title ? `<p class="mt-1 text-sm text-zinc-400 line-clamp-3">${escapeHtml(post.description)}</p>` : ''}
+            ${embedHtml}
             ${post.exifData ? `<div class="mt-2 text-xs text-zinc-500">${formatExif(post.exifData)}</div>` : ''}
             <div class="mt-3 flex items-center gap-4 text-sm text-zinc-400">
               ${actionsHtml}

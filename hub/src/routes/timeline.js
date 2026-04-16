@@ -69,6 +69,7 @@ router.get('/', authenticate, async (req, res) => {
     imageUrl: post.imageUrl,
     tags: post.tags,
     author: post.author,
+    embedData: post.embedData,
     createdAt: post.createdAt,
     source: 'external',
     feed: post.feed,

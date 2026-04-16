@@ -331,6 +331,11 @@ export async function aggregateExternalFeed(prisma, feed) {
     }
   }
 
+  // Enrich Bluesky posts with images/embeds via public API
+  if (isBlueskyFeed(feed.feedUrl)) {
+    await enrichBlueskyPosts(prisma, feed.id);
+  }
+
   return newCount;
 }
 
@@ -384,6 +389,155 @@ function parseDate(dateStr) {
   if (!dateStr) return new Date();
   const d = new Date(dateStr);
   return isNaN(d.getTime()) ? new Date() : d;
+}
+
+/**
+ * Check if a feed URL is a Bluesky RSS feed.
+ */
+function isBlueskyFeed(feedUrl) {
+  return feedUrl.includes('bsky.app/profile/') && feedUrl.endsWith('/rss');
+}
+
+/**
+ * Enrich Bluesky posts that lack embedData by fetching from the public API.
+ */
+async function enrichBlueskyPosts(prisma, feedId) {
+  // Find posts with AT URI guids that don't yet have embed data
+  const posts = await prisma.externalPost.findMany({
+    where: { feedId, embedData: null, guid: { startsWith: 'at://' } },
+    select: { id: true, guid: true },
+    take: 25, // API limit per request
+  });
+
+  if (posts.length === 0) return;
+
+  const uris = posts.map(p => p.guid);
+  const params = new URLSearchParams();
+  uris.forEach(u => params.append('uris', u));
+
+  try {
+    const res = await fetch(`https://public.api.bsky.app/xrpc/app.bsky.feed.getPosts?${params}`, {
+      headers: { 'User-Agent': 'PirateSocial-Hub/1.0' },
+      signal: AbortSignal.timeout(15000),
+    });
+    if (!res.ok) return;
+
+    const data = await res.json();
+    const postMap = new Map();
+    for (const p of data.posts || []) {
+      postMap.set(p.uri, p);
+    }
+
+    for (const post of posts) {
+      const bskyPost = postMap.get(post.guid);
+      if (!bskyPost) continue;
+
+      const embedData = extractBlueskyEmbed(bskyPost);
+      const updates = { embedData };
+
+      // Use first image as imageUrl if not set
+      if (embedData.images?.length > 0) {
+        updates.imageUrl = embedData.images[0].fullsize || embedData.images[0].thumb;
+      }
+
+      // Use author display name
+      if (bskyPost.author?.displayName) {
+        updates.author = bskyPost.author.displayName;
+      }
+
+      await prisma.externalPost.update({
+        where: { id: post.id },
+        data: updates,
+      });
+    }
+  } catch (err) {
+    console.warn('[bluesky-enrich] Failed to fetch post data:', err.message);
+  }
+}
+
+/**
+ * Extract embed data from a Bluesky post view.
+ */
+function extractBlueskyEmbed(post) {
+  const embed = post.embed;
+  const result = {};
+
+  if (!embed) return result;
+
+  const type = embed.$type;
+
+  // Images
+  if (type === 'app.bsky.embed.images#view') {
+    result.images = (embed.images || []).map(img => ({
+      thumb: img.thumb,
+      fullsize: img.fullsize,
+      alt: img.alt || '',
+      aspectRatio: img.aspectRatio || null,
+    }));
+  }
+
+  // External link (link card)
+  if (type === 'app.bsky.embed.external#view') {
+    result.external = {
+      uri: embed.external?.uri,
+      title: embed.external?.title,
+      description: embed.external?.description,
+      thumb: embed.external?.thumb,
+    };
+  }
+
+  // Video
+  if (type === 'app.bsky.embed.video#view') {
+    result.video = {
+      thumb: embed.thumbnail,
+      playlist: embed.playlist, // HLS playlist URL
+      aspectRatio: embed.aspectRatio || null,
+      alt: embed.alt || '',
+    };
+  }
+
+  // Quote post
+  if (type === 'app.bsky.embed.record#view') {
+    const rec = embed.record?.value || embed.record?.record;
+    result.quote = {
+      text: rec?.text || '',
+      author: embed.record?.author?.displayName || embed.record?.author?.handle || '',
+      handle: embed.record?.author?.handle || '',
+      uri: embed.record?.uri || '',
+    };
+  }
+
+  // Record with media (quote + images/video)
+  if (type === 'app.bsky.embed.recordWithMedia#view') {
+    // Extract media part
+    const media = embed.media;
+    if (media?.$type === 'app.bsky.embed.images#view') {
+      result.images = (media.images || []).map(img => ({
+        thumb: img.thumb,
+        fullsize: img.fullsize,
+        alt: img.alt || '',
+        aspectRatio: img.aspectRatio || null,
+      }));
+    }
+    if (media?.$type === 'app.bsky.embed.video#view') {
+      result.video = {
+        thumb: media.thumbnail,
+        playlist: media.playlist,
+        aspectRatio: media.aspectRatio || null,
+        alt: media.alt || '',
+      };
+    }
+    // Extract quote part
+    const rec = embed.record?.record?.value || embed.record?.record?.record;
+    result.quote = {
+      text: rec?.text || '',
+      author: embed.record?.record?.author?.displayName || embed.record?.record?.author?.handle || '',
+      handle: embed.record?.record?.author?.handle || '',
+      uri: embed.record?.record?.uri || '',
+    };
+  }
+
+  return result;
 }
 
 export default router;

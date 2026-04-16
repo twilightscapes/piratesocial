@@ -167,6 +167,7 @@ model ExternalPost {
   imageUrl    String?
   author      String?
   tags        String[]
+  embedData   Json?
   createdAt   DateTime @default(now())
 
   feed        ExternalFeed @relation(fields: [feedId], references: [id], onDelete: Cascade)
