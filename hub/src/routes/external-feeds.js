@@ -159,6 +159,8 @@ router.delete('/:feedId', authenticate, async (req, res) => {
   });
   if (!feed) return res.status(404).json({ error: 'Feed not found' });
 
+  // Delete posts first, then the feed (belt-and-suspenders alongside cascade)
+  await prisma.externalPost.deleteMany({ where: { feedId: feed.id } });
   await prisma.externalFeed.delete({ where: { id: feed.id } });
 
   res.json({ deleted: true });
@@ -175,7 +177,14 @@ router.post('/:feedId/refresh', authenticate, async (req, res) => {
 
   const count = await aggregateExternalFeed(prisma, feed);
 
-  res.json({ newPosts: count });
+  // Also force re-enrich for Bluesky feeds (in case prior enrichment failed)
+  let enriched = 0;
+  if (isBlueskyFeed(feed.feedUrl)) {
+    // Clear embedData on posts that have empty/null embed to force re-enrichment
+    enriched = await enrichBlueskyPosts(prisma, feed.id);
+  }
+
+  res.json({ newPosts: count, enriched: enriched || 0 });
 });
 
 /**
@@ -404,23 +413,35 @@ function isBlueskyFeed(feedUrl) {
 async function enrichBlueskyPosts(prisma, feedId) {
   // Find posts with AT URI guids that don't yet have embed data
   const posts = await prisma.externalPost.findMany({
-    where: { feedId, embedData: null, guid: { startsWith: 'at://' } },
+    where: {
+      feedId,
+      guid: { startsWith: 'at://' },
+      OR: [
+        { embedData: { equals: null } },
+        { embedData: { equals: {} } },
+      ],
+    },
     select: { id: true, guid: true },
     take: 25, // API limit per request
   });
 
-  if (posts.length === 0) return;
+  if (posts.length === 0) return 0;
 
   const uris = posts.map(p => p.guid);
   const params = new URLSearchParams();
   uris.forEach(u => params.append('uris', u));
+
+  let enriched = 0;
 
   try {
     const res = await fetch(`https://public.api.bsky.app/xrpc/app.bsky.feed.getPosts?${params}`, {
       headers: { 'User-Agent': 'PirateSocial-Hub/1.0' },
       signal: AbortSignal.timeout(15000),
     });
-    if (!res.ok) return;
+    if (!res.ok) {
+      console.warn('[bluesky-enrich] API returned', res.status);
+      return 0;
+    }
 
     const data = await res.json();
     const postMap = new Map();
@@ -433,7 +454,8 @@ async function enrichBlueskyPosts(prisma, feedId) {
       if (!bskyPost) continue;
 
       const embedData = extractBlueskyEmbed(bskyPost);
-      const updates = { embedData };
+      // Only store if there's actual embed content; mark non-embed posts to avoid re-processing
+      const updates = { embedData: Object.keys(embedData).length > 0 ? embedData : { none: true } };
 
       // Use first image as imageUrl if not set
       if (embedData.images?.length > 0) {
@@ -449,10 +471,13 @@ async function enrichBlueskyPosts(prisma, feedId) {
         where: { id: post.id },
         data: updates,
       });
+      enriched++;
     }
   } catch (err) {
     console.warn('[bluesky-enrich] Failed to fetch post data:', err.message);
   }
+
+  return enriched;
 }
 
 /**
