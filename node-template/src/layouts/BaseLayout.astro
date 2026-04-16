@@ -32,13 +32,19 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     <!-- RSS -->
     <link rel="alternate" type="application/rss+xml" title={siteConfig.title} href={`${base}/feed.xml`} />
 
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href={`${base}/favicon.svg`} />
+    <!-- Favicon & PWA -->
+    <link rel="icon" type="image/svg+xml" href={`${base}/images/logoImage.svg`} />
+    <link rel="icon" type="image/png" sizes="192x192" href={`${base}/images/icon192.png`} />
+    <link rel="apple-touch-icon" href={`${base}/images/icon192.png`} />
+    <link rel="manifest" href={`${base}/manifest.json`} />
+    <meta name="theme-color" content="#09090b" />
   </head>
   <body class="min-h-screen bg-zinc-950 text-zinc-100 antialiased">
     <header class="border-b border-zinc-800">
       <nav class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-        <a href={`${base}/`} class="text-xl font-bold tracking-tight">{siteConfig.title}</a>
+        <a href={`${base}/`} class="flex items-center">
+          <img src={`${base}/images/logoImage.svg`} alt={siteConfig.title} class="h-8" />
+        </a>
         <div class="flex items-center gap-6 text-sm">
           <a href={`${base}/posts`} class="hover:text-white text-zinc-400 transition">Posts</a>
           <a href={`${base}/galleries`} class="hover:text-white text-zinc-400 transition">Galleries</a>
