@@ -87,15 +87,22 @@ import { siteConfig } from '../lib/config';
     // Get session from hub (hub calls createSession with stored app password)
     if (!token) return null;
     try {
+      console.log('[PS] Fetching Bluesky session from hub...');
       const res = await fetchWithTimeout(`${hubUrl}/api/bluesky/session`, {
         headers: { Authorization: `Bearer ${token}` },
       }, 10000);
+      console.log('[PS] Session response:', res.status);
       if (res.ok) {
         const data = await res.json();
+        console.log('[PS] Got session for:', data.handle);
         saveBskySession(data);
         return data;
       }
-    } catch {}
+      const errData = await res.json().catch(() => ({}));
+      console.error('[PS] Session error:', res.status, errData.error);
+    } catch (err) {
+      console.error('[PS] Session fetch failed:', err.message);
+    }
     return null;
   }
 
@@ -155,15 +162,18 @@ import { siteConfig } from '../lib/config';
       } else if (currentTab === 'bluesky' && token) {
         // Use browser-side Bluesky session with thin hub proxy
         const session = await ensureBskySession();
+        console.log('[PS] Bluesky session:', session ? 'got accessJwt' : 'NONE');
         if (!session?.accessJwt) {
           feedContainer.innerHTML = '<div class="text-center py-8 text-zinc-500">Connect your Bluesky account in Settings to see your feed</div>';
           return;
         }
         try {
           const proxyUrl = `${hubUrl}/api/bluesky-feed/proxy/timeline?limit=30${bskyCursor ? `&cursor=${encodeURIComponent(bskyCursor)}` : ''}`;
+          console.log('[PS] Fetching timeline via proxy...');
           const res = await fetchWithTimeout(proxyUrl, {
             headers: { 'Authorization': `Bearer ${session.accessJwt}` },
           }, 10000);
+          console.log('[PS] Proxy response:', res.status);
           if (res.ok) {
             const data = await res.json();
             renderBskyPosts(data, append);
