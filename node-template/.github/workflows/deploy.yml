@@ -51,6 +51,13 @@ jobs:
             cp user-repo/src/data/settings.json build/src/data/settings.json
           fi
           
+          # User customizations (theme, labels, PWA — edited via Decap CMS)
+          for f in labels.json theme.json pwa.json; do
+            if [ -f "user-repo/src/data/$f" ]; then
+              cp "user-repo/src/data/$f" "build/src/data/$f"
+            fi
+          done
+          
           # User images (overlay on top of template images, user files win)
           if [ -d user-repo/public/images ]; then
             cp -r user-repo/public/images/. build/public/images/
