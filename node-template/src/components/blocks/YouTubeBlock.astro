@@ -1,0 +1,28 @@
+---
+const { url, heading, caption, layout = 'contained' } = Astro.props;
+
+function getYouTubeId(url: string): string | null {
+  const match = url?.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&?\s]+)/);
+  return match ? match[1] : null;
+}
+
+const videoId = getYouTubeId(url);
+const wrapperClass = layout === 'full' ? '' : 'max-w-4xl mx-auto';
+---
+
+{videoId && (
+  <section class={`mb-12 ${wrapperClass}`}>
+    {heading && <h2 class="mb-4 text-xl font-semibold">{heading}</h2>}
+    <div class="relative w-full overflow-hidden rounded-lg" style="padding-bottom: 56.25%;">
+      <iframe
+        src={`https://www.youtube-nocookie.com/embed/${videoId}`}
+        title={heading || 'YouTube video'}
+        class="absolute inset-0 h-full w-full"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen
+      ></iframe>
+    </div>
+    {caption && <p class="mt-2 text-sm text-theme-muted text-center">{caption}</p>}
+  </section>
+)}

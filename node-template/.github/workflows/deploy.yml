@@ -52,7 +52,7 @@ jobs:
           fi
           
           # User customizations (theme, labels, PWA — edited via Decap CMS)
-          for f in labels.json theme.json pwa.json; do
+          for f in labels.json theme.json pwa.json home.json; do
             if [ -f "user-repo/src/data/$f" ]; then
               cp "user-repo/src/data/$f" "build/src/data/$f"
             fi

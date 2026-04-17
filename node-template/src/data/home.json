@@ -1,0 +1,14 @@
+{
+  "blocks": [
+    {
+      "type": "profile",
+      "layout": "center"
+    },
+    {
+      "type": "recentPosts",
+      "heading": "Recent Photos",
+      "count": 6,
+      "columns": "3"
+    }
+  ]
+}

@@ -85,6 +85,139 @@ collections:
           - { label: Caption, name: caption, widget: string, required: false }
       - { label: Body, name: body, widget: markdown }
 
+  - name: pages
+    label: Pages
+    files:
+      - label: "Home Page"
+        name: home
+        file: src/data/home.json
+        fields:
+          - label: "Content Blocks"
+            name: blocks
+            widget: list
+            hint: "Drag to reorder blocks. Click 'Add' to insert new content modules."
+            types:
+              - label: "Hero Banner"
+                name: hero
+                widget: object
+                fields:
+                  - { label: "Heading", name: heading, widget: string, required: false }
+                  - { label: "Subheading", name: subheading, widget: text, required: false }
+                  - { label: "Background Image", name: image, widget: image, required: false }
+                  - { label: "Dark Overlay", name: overlay, widget: boolean, default: true, hint: "Add a dark gradient over the image for text readability" }
+                  - label: "Height"
+                    name: height
+                    widget: select
+                    options:
+                      - { label: "Small (40vh)", value: "small" }
+                      - { label: "Medium (60vh)", value: "medium" }
+                      - { label: "Large (80vh)", value: "large" }
+                      - { label: "Full Screen", value: "full" }
+                    default: "medium"
+
+              - label: "Profile Card"
+                name: profile
+                widget: object
+                fields:
+                  - label: "Layout"
+                    name: layout
+                    widget: select
+                    options:
+                      - { label: "Centered", value: "center" }
+                      - { label: "Side by Side", value: "row" }
+                      - { label: "Card", value: "card" }
+                    default: "center"
+
+              - label: "Recent Posts"
+                name: recentPosts
+                widget: object
+                fields:
+                  - { label: "Heading", name: heading, widget: string, default: "Recent Photos" }
+                  - { label: "Post Count", name: count, widget: number, default: 6, value_type: int, min: 1, max: 24 }
+                  - label: "Columns"
+                    name: columns
+                    widget: select
+                    options:
+                      - { label: "2 Columns", value: "2" }
+                      - { label: "3 Columns", value: "3" }
+                      - { label: "4 Columns", value: "4" }
+                    default: "3"
+
+              - label: "YouTube Video"
+                name: youtube
+                widget: object
+                fields:
+                  - { label: "YouTube URL", name: url, widget: string, hint: "Paste a YouTube video URL (e.g. https://youtube.com/watch?v=...)" }
+                  - { label: "Heading", name: heading, widget: string, required: false }
+                  - { label: "Caption", name: caption, widget: text, required: false }
+                  - label: "Layout"
+                    name: layout
+                    widget: select
+                    options:
+                      - { label: "Full Width", value: "full" }
+                      - { label: "Contained", value: "contained" }
+                    default: "contained"
+
+              - label: "Photo Gallery"
+                name: gallery
+                widget: object
+                fields:
+                  - { label: "Heading", name: heading, widget: string, required: false }
+                  - label: "Columns"
+                    name: columns
+                    widget: select
+                    options:
+                      - { label: "2 Columns", value: "2" }
+                      - { label: "3 Columns", value: "3" }
+                      - { label: "4 Columns", value: "4" }
+                    default: "3"
+                  - label: "Photos"
+                    name: images
+                    widget: list
+                    fields:
+                      - { label: "Image", name: src, widget: image }
+                      - { label: "Alt Text", name: alt, widget: string, required: false }
+                      - { label: "Caption", name: caption, widget: string, required: false }
+
+              - label: "Text / Markdown"
+                name: text
+                widget: object
+                fields:
+                  - { label: "Heading", name: heading, widget: string, required: false }
+                  - { label: "Body", name: body, widget: markdown }
+                  - label: "Layout"
+                    name: layout
+                    widget: select
+                    options:
+                      - { label: "Full Width", value: "full" }
+                      - { label: "Narrow (centered)", value: "narrow" }
+                    default: "narrow"
+
+              - label: "Image"
+                name: image
+                widget: object
+                fields:
+                  - { label: "Image", name: src, widget: image }
+                  - { label: "Alt Text", name: alt, widget: string, required: false }
+                  - { label: "Caption", name: caption, widget: string, required: false }
+                  - { label: "Lightbox", name: lightbox, widget: boolean, default: true, hint: "Click to open full-screen" }
+                  - label: "Layout"
+                    name: layout
+                    widget: select
+                    options:
+                      - { label: "Full Width", value: "full" }
+                      - { label: "Contained", value: "contained" }
+                      - { label: "Banner (short & wide)", value: "banner" }
+                    default: "contained"
+
+              - label: "Location"
+                name: location
+                widget: object
+                fields:
+                  - { label: "Heading", name: heading, widget: string, default: "Location" }
+                  - { label: "Address / Description", name: address, widget: text, required: false }
+                  - { label: "Map Embed URL", name: mapUrl, widget: string, required: false, hint: "Google Maps embed URL (from Share > Embed a map > copy the src URL)" }
+
   - name: site-settings
     label: Site Settings
     files:
