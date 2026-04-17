@@ -23,7 +23,7 @@ export const siteConfig = {
   location: settings.location || '',
   camera: settings.camera || '',
   siteUrl: import.meta.env.SITE || (settings.github ? `https://${settings.github}.github.io` : ''),
-  hubUrl: 'https://piratesocial.app',
+  hubUrl: 'https://piratesocial-hub.fly.dev',
   social: {
     github: settings.github || '',
     instagram: settings.instagram || '',
