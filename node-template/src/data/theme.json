@@ -1,4 +1,11 @@
 {
+  "backgroundImage": {
+    "url": "",
+    "size": "cover",
+    "position": "center center",
+    "attachment": "fixed",
+    "blur": "0"
+  },
   "fonts": {
     "heading": "system-ui, -apple-system, sans-serif",
     "body": "system-ui, -apple-system, sans-serif",

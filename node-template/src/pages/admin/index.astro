@@ -137,6 +137,274 @@
       });
       CMS.registerPreviewTemplate('posts', PostPreview);
 
+      // ── Theme preview template ──────────────────────────────────────
+      var ThemePreview = createClass({
+        render: function () {
+          var entry = this.props.entry;
+          var d = entry.get('data');
+          var getAsset = this.props.getAsset;
+
+          // Fonts
+          var fonts = d.get('fonts') || Immutable.Map();
+          var headingFont = fonts.get('heading') || 'system-ui, sans-serif';
+          var bodyFont = fonts.get('body') || 'system-ui, sans-serif';
+          var headingScale = parseFloat(fonts.get('headingSize') || '1');
+          var bodyScale = parseFloat(fonts.get('bodySize') || '1');
+
+          // Background image
+          var bgImg = d.get('backgroundImage') || Immutable.Map();
+          var bgUrl = bgImg.get('url') || '';
+          var bgSize = bgImg.get('size') || 'cover';
+          var bgPos = bgImg.get('position') || 'center center';
+          var bgAttach = bgImg.get('attachment') || 'fixed';
+          var bgBlur = parseInt(bgImg.get('blur') || '0', 10);
+
+          // Resolve the image asset if present
+          var bgSrc = '';
+          if (bgUrl) {
+            try { bgSrc = getAsset(bgUrl).toString(); } catch(e) { bgSrc = bgUrl; }
+          }
+
+          // Colors — show light mode in left half, dark in right half
+          var lt = d.get('light') || Immutable.Map();
+          var dk = d.get('dark') || Immutable.Map();
+
+          function c(palette, key, fallback) {
+            return palette.get(key) || fallback || 'transparent';
+          }
+
+          // Load Google Fonts in preview
+          function extractFont(cssVal) {
+            var m = cssVal.match(/^'([^']+)'/);
+            return m ? m[1] : null;
+          }
+          var gFonts = {};
+          [headingFont, bodyFont].forEach(function(f) { var n = extractFont(f); if (n) gFonts[n] = true; });
+          var fontUrl = Object.keys(gFonts).length
+            ? 'https://fonts.googleapis.com/css2?' + Object.keys(gFonts).map(function(f) { return 'family=' + f.replace(/ /g, '+') + ':wght@300;400;500;600;700'; }).join('&') + '&display=swap'
+            : null;
+
+          // ── Render a single mode panel ──
+          function renderPanel(palette, isDark, label) {
+            var bg = c(palette, 'background', isDark ? '#09090b' : '#fff');
+            var surface = c(palette, 'surface', isDark ? '#18181b' : '#fff');
+            var surfaceBorder = c(palette, 'surfaceBorder');
+            var text = c(palette, 'text', isDark ? '#f4f4f5' : '#18181b');
+            var textMuted = c(palette, 'textMuted', isDark ? '#a1a1aa' : '#52525b');
+            var textFaint = c(palette, 'textFaint', isDark ? '#71717a' : '#71717a');
+            var primary = c(palette, 'primary', '#3b82f6');
+            var primaryHover = c(palette, 'primaryHover');
+            var accent = c(palette, 'accent', '#8b5cf6');
+            var border = c(palette, 'border', isDark ? '#27272a' : '#e4e4e7');
+            var inputBg = c(palette, 'inputBg');
+            var inputBorder = c(palette, 'inputBorder');
+            var tag = c(palette, 'tag');
+            var tagText = c(palette, 'tagText');
+            var cardBg = c(palette, 'cardBg', surface);
+            var cardBorder = c(palette, 'cardBorder', border);
+            var headerBg = c(palette, 'headerBg', bg);
+            var footerBg = c(palette, 'footerBg', bg);
+
+            return h('div', { style: {
+              position: 'relative', overflow: 'hidden',
+              borderRadius: '12px', border: '1px solid ' + border,
+              fontFamily: bodyFont, fontSize: (14 * bodyScale) + 'px',
+              marginBottom: '20px',
+            }},
+              // Background image layer
+              bgSrc && h('div', { style: {
+                position: 'absolute', inset: bgBlur > 0 ? '-' + (bgBlur + 10) + 'px' : '0',
+                backgroundImage: 'url(' + bgSrc + ')',
+                backgroundSize: bgSize, backgroundPosition: bgPos,
+                backgroundRepeat: 'no-repeat',
+                filter: bgBlur > 0 ? 'blur(' + bgBlur + 'px)' : 'none',
+                zIndex: 0,
+              }}),
+              // Body background color overlay
+              h('div', { style: {
+                position: 'absolute', inset: '0', backgroundColor: bg, zIndex: 1,
+                opacity: bgSrc ? 0.85 : 1,
+              }}),
+
+              // Content
+              h('div', { style: { position: 'relative', zIndex: 2 }},
+
+                // Header
+                h('div', { style: {
+                  padding: '10px 16px', borderBottom: '1px solid ' + border,
+                  backgroundColor: headerBg, display: 'flex', alignItems: 'center',
+                  justifyContent: 'space-between',
+                  backdropFilter: bgSrc ? 'blur(12px)' : 'none',
+                }},
+                  h('span', { style: { fontFamily: headingFont, fontWeight: 700, color: text, fontSize: (16 * headingScale) + 'px' }}, label),
+                  h('div', { style: { display: 'flex', gap: '12px', alignItems: 'center' }},
+                    h('span', { style: { color: textMuted, fontSize: '12px' }}, 'Posts'),
+                    h('span', { style: { color: textMuted, fontSize: '12px' }}, 'Galleries'),
+                    h('span', { style: { color: textMuted, fontSize: '12px' }}, 'Social'),
+                    h('span', { style: {
+                      backgroundColor: primary, color: '#fff', padding: '3px 10px',
+                      borderRadius: '6px', fontSize: '11px', fontWeight: 500,
+                    }}, 'Sign In')
+                  )
+                ),
+
+                // Body area
+                h('div', { style: { padding: '16px', backgroundColor: 'transparent' }},
+
+                  // Page heading
+                  h('h2', { style: {
+                    fontFamily: headingFont, color: text,
+                    fontSize: (22 * headingScale) + 'px', fontWeight: 700,
+                    margin: '0 0 4px 0',
+                  }}, 'Page Heading'),
+                  h('p', { style: { color: textMuted, fontSize: '13px', margin: '0 0 16px 0' }}, 'A description of this page in muted text'),
+
+                  // Card
+                  h('div', { style: {
+                    backgroundColor: cardBg, border: '1px solid ' + cardBorder,
+                    borderRadius: '10px', padding: '14px', marginBottom: '14px',
+                  }},
+                    h('div', { style: { display: 'flex', gap: '10px', alignItems: 'flex-start' }},
+                      h('div', { style: {
+                        width: '36px', height: '36px', borderRadius: '50%',
+                        backgroundColor: accent, flexShrink: 0,
+                      }}),
+                      h('div', { style: { flex: 1 }},
+                        h('div', { style: { display: 'flex', gap: '6px', alignItems: 'baseline' }},
+                          h('span', { style: { color: text, fontWeight: 600, fontSize: '13px' }}, 'Jane Doe'),
+                          h('span', { style: { color: textFaint, fontSize: '11px' }}, '2 hours ago')
+                        ),
+                        h('p', { style: { color: text, margin: '6px 0 10px', fontSize: '13px', lineHeight: '1.5' }},
+                          'Check out this amazing sunset I captured at the coast! ',
+                          h('a', { style: { color: primary, textDecoration: 'underline' }}, '#photography')
+                        ),
+                        h('div', { style: {
+                          backgroundColor: inputBg, height: '120px', borderRadius: '8px',
+                          border: '1px solid ' + border, marginBottom: '10px',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          overflow: 'hidden',
+                        }},
+                          bgSrc
+                            ? h('img', { src: bgSrc, style: { width: '100%', height: '100%', objectFit: 'cover' }})
+                            : h('span', { style: { color: textFaint, fontSize: '11px' }}, 'Photo')
+                        ),
+                        // Tags
+                        h('div', { style: { display: 'flex', gap: '6px', marginBottom: '8px' }},
+                          h('span', { style: { backgroundColor: tag, color: tagText, padding: '2px 8px', borderRadius: '9999px', fontSize: '11px' }}, 'sunset'),
+                          h('span', { style: { backgroundColor: tag, color: tagText, padding: '2px 8px', borderRadius: '9999px', fontSize: '11px' }}, 'coast')
+                        ),
+                        // Actions
+                        h('div', { style: { display: 'flex', gap: '14px' }},
+                          h('span', { style: { color: textMuted, fontSize: '11px' }}, '\u2661 12'),
+                          h('span', { style: { color: textMuted, fontSize: '11px' }}, '\uD83D\uDCAC 3'),
+                          h('span', { style: { color: accent, fontSize: '11px' }}, '\u21AA Share')
+                        )
+                      )
+                    )
+                  ),
+
+                  // Input row
+                  h('div', { style: { display: 'flex', gap: '8px', marginBottom: '14px' }},
+                    h('input', { readOnly: true, value: 'Type something...', style: {
+                      flex: 1, backgroundColor: inputBg, border: '1px solid ' + inputBorder,
+                      borderRadius: '6px', padding: '7px 10px', color: textFaint, fontSize: '12px',
+                      outline: 'none',
+                    }}),
+                    h('span', { style: {
+                      backgroundColor: primary, color: '#fff', padding: '7px 14px',
+                      borderRadius: '6px', fontSize: '12px', fontWeight: 500,
+                    }}, 'Post')
+                  ),
+
+                  // Buttons row
+                  h('div', { style: { display: 'flex', gap: '8px', flexWrap: 'wrap' }},
+                    h('span', { style: {
+                      backgroundColor: primary, color: '#fff', padding: '6px 14px',
+                      borderRadius: '6px', fontSize: '12px', fontWeight: 500,
+                    }}, 'Primary Button'),
+                    h('span', { style: {
+                      backgroundColor: accent, color: '#fff', padding: '6px 14px',
+                      borderRadius: '6px', fontSize: '12px', fontWeight: 500,
+                    }}, 'Accent Button'),
+                    h('span', { style: {
+                      backgroundColor: 'transparent', color: text, padding: '5px 14px',
+                      borderRadius: '6px', fontSize: '12px', fontWeight: 500,
+                      border: '1px solid ' + border,
+                    }}, 'Outline')
+                  )
+                ),
+
+                // Footer
+                h('div', { style: {
+                  padding: '10px 16px', borderTop: '1px solid ' + border,
+                  backgroundColor: footerBg, textAlign: 'center',
+                }},
+                  h('span', { style: { color: textFaint, fontSize: '11px' }},
+                    'Powered by ', h('a', { style: { color: primary, textDecoration: 'underline' }}, 'Pirate Social')
+                  )
+                )
+              )
+            );
+          }
+
+          return h('div', { style: { padding: '20px 24px', fontFamily: bodyFont, maxWidth: '900px', margin: '0 auto' }},
+            fontUrl && h('link', { rel: 'stylesheet', href: fontUrl }),
+
+            // Section: Background Image
+            bgSrc && h('div', { style: { marginBottom: '24px' }},
+              h('h3', { style: { fontFamily: headingFont, fontSize: '14px', fontWeight: 600, color: '#a1a1aa', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '10px' }}, 'Background Image Preview'),
+              h('div', { style: {
+                position: 'relative', height: '140px', borderRadius: '10px', overflow: 'hidden',
+                border: '1px solid #27272a',
+              }},
+                h('div', { style: {
+                  position: 'absolute',
+                  inset: bgBlur > 0 ? '-' + (bgBlur + 10) + 'px' : '0',
+                  backgroundImage: 'url(' + bgSrc + ')',
+                  backgroundSize: bgSize, backgroundPosition: bgPos,
+                  backgroundRepeat: 'no-repeat',
+                  filter: bgBlur > 0 ? 'blur(' + bgBlur + 'px)' : 'none',
+                }}),
+                h('div', { style: {
+                  position: 'absolute', inset: '0', display: 'flex',
+                  alignItems: 'center', justifyContent: 'center',
+                }},
+                  h('span', { style: {
+                    background: 'rgba(0,0,0,0.6)', color: '#fff', padding: '6px 14px',
+                    borderRadius: '8px', fontSize: '12px', fontWeight: 500,
+                  }}, bgSize + ' \u00B7 ' + bgPos + (bgBlur > 0 ? ' \u00B7 blur ' + bgBlur + 'px' : ''))
+                )
+              )
+            ),
+
+            // Section: Typography
+            h('div', { style: { marginBottom: '24px' }},
+              h('h3', { style: { fontFamily: headingFont, fontSize: '14px', fontWeight: 600, color: '#a1a1aa', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '10px' }}, 'Typography'),
+              h('div', { style: { display: 'flex', gap: '16px', flexWrap: 'wrap' }},
+                h('div', { style: { flex: 1, minWidth: '200px', background: '#18181b', borderRadius: '8px', padding: '14px', border: '1px solid #27272a' }},
+                  h('div', { style: { color: '#71717a', fontSize: '10px', textTransform: 'uppercase', marginBottom: '6px' }}, 'Heading Font'),
+                  h('div', { style: { fontFamily: headingFont, fontSize: (24 * headingScale) + 'px', fontWeight: 700, color: '#f4f4f5' }}, 'The Quick Brown Fox'),
+                  h('div', { style: { fontFamily: headingFont, fontSize: (18 * headingScale) + 'px', fontWeight: 600, color: '#d4d4d8' }}, 'Jumps Over the Lazy Dog')
+                ),
+                h('div', { style: { flex: 1, minWidth: '200px', background: '#18181b', borderRadius: '8px', padding: '14px', border: '1px solid #27272a' }},
+                  h('div', { style: { color: '#71717a', fontSize: '10px', textTransform: 'uppercase', marginBottom: '6px' }}, 'Body Font'),
+                  h('div', { style: { fontFamily: bodyFont, fontSize: (14 * bodyScale) + 'px', color: '#f4f4f5', lineHeight: '1.6' }},
+                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore.'
+                  )
+                )
+              )
+            ),
+
+            // Section: Light & Dark side by side
+            h('div', { style: { display: 'flex', gap: '16px', flexWrap: 'wrap' }},
+              h('div', { style: { flex: 1, minWidth: '320px' }}, renderPanel(lt, false, '\u2600 Light Mode')),
+              h('div', { style: { flex: 1, minWidth: '320px' }}, renderPanel(dk, true, '\uD83C\uDF19 Dark Mode'))
+            )
+          );
+        },
+      });
+      CMS.registerPreviewTemplate('theme', ThemePreview);
+
       // Gallery preview template
       var GalleryPreview = createClass({
         render: function () {

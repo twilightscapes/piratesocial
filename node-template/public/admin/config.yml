@@ -104,6 +104,11 @@ collections:
         name: pwa
         file: src/data/pwa.json
         fields:
+          - label: "Search Engine Visibility"
+            name: searchEngineVisibility
+            widget: boolean
+            default: true
+            hint: "When OFF, search engines like Google will be asked not to index your site (adds noindex/nofollow)"
           - { label: "App Name", name: name, widget: string, default: "Pirate Social", hint: "Full name shown in app install prompts and splash screens" }
           - { label: "Short Name", name: shortName, widget: string, default: "Pirate", hint: "Shown on the home screen icon (keep under 12 chars)" }
           - { label: "App Description", name: description, widget: text, default: "A photography site on the Pirate Social network", hint: "Shown in app store listings and install prompts" }
@@ -136,6 +141,54 @@ collections:
         name: theme
         file: src/data/theme.json
         fields:
+          - label: "Background Image"
+            name: backgroundImage
+            widget: object
+            collapsed: false
+            fields:
+              - { label: "Image", name: url, widget: image, required: false, hint: "Upload a background image for the site body" }
+              - label: "Size"
+                name: size
+                widget: select
+                options:
+                  - { label: "Cover (fill screen, may crop)", value: "cover" }
+                  - { label: "Contain (fit entirely, may leave gaps)", value: "contain" }
+                  - { label: "Fill (stretch to fit)", value: "100% 100%" }
+                  - { label: "Auto (natural size)", value: "auto" }
+                default: "cover"
+              - label: "Position"
+                name: position
+                widget: select
+                options:
+                  - { label: "Center", value: "center center" }
+                  - { label: "Top", value: "center top" }
+                  - { label: "Bottom", value: "center bottom" }
+                  - { label: "Left", value: "left center" }
+                  - { label: "Right", value: "right center" }
+                  - { label: "Top Left", value: "left top" }
+                  - { label: "Top Right", value: "right top" }
+                  - { label: "Bottom Left", value: "left bottom" }
+                  - { label: "Bottom Right", value: "right bottom" }
+                default: "center center"
+              - label: "Scroll Behavior"
+                name: attachment
+                widget: select
+                options:
+                  - { label: "Fixed (stays in place while scrolling)", value: "fixed" }
+                  - { label: "Scroll (moves with content)", value: "scroll" }
+                default: "fixed"
+              - label: "Blur Amount (px)"
+                name: blur
+                widget: select
+                options:
+                  - { label: "None", value: "0" }
+                  - { label: "Slight (2px)", value: "2" }
+                  - { label: "Light (4px)", value: "4" }
+                  - { label: "Medium (8px)", value: "8" }
+                  - { label: "Heavy (16px)", value: "16" }
+                  - { label: "Extreme (32px)", value: "32" }
+                default: "0"
+
           - label: Fonts
             name: fonts
             widget: object

@@ -39,6 +39,11 @@ const dk = theme.dark;
 const lightVars = `--ps-bg:${lt.background};--ps-surface:${lt.surface};--ps-surface-border:${lt.surfaceBorder};--ps-surface-hover:${lt.surfaceHover};--ps-text:${lt.text};--ps-text-muted:${lt.textMuted};--ps-text-faint:${lt.textFaint};--ps-primary:${lt.primary};--ps-primary-hover:${lt.primaryHover};--ps-accent:${lt.accent};--ps-border:${lt.border};--ps-input-bg:${lt.inputBg};--ps-input-border:${lt.inputBorder};--ps-tag:${lt.tag};--ps-tag-text:${lt.tagText};--ps-card-bg:${lt.cardBg};--ps-card-border:${lt.cardBorder};--ps-card-hover:${lt.cardHover};--ps-header-bg:${lt.headerBg};--ps-footer-bg:${lt.footerBg}`;
 const darkVars = `--ps-bg:${dk.background};--ps-surface:${dk.surface};--ps-surface-border:${dk.surfaceBorder};--ps-surface-hover:${dk.surfaceHover};--ps-text:${dk.text};--ps-text-muted:${dk.textMuted};--ps-text-faint:${dk.textFaint};--ps-primary:${dk.primary};--ps-primary-hover:${dk.primaryHover};--ps-accent:${dk.accent};--ps-border:${dk.border};--ps-input-bg:${dk.inputBg};--ps-input-border:${dk.inputBorder};--ps-tag:${dk.tag};--ps-tag-text:${dk.tagText};--ps-card-bg:${dk.cardBg};--ps-card-border:${dk.cardBorder};--ps-card-hover:${dk.cardHover};--ps-header-bg:${dk.headerBg};--ps-footer-bg:${dk.footerBg}`;
 const fontVars = `--ps-font-heading:${theme.fonts.heading};--ps-font-body:${theme.fonts.body};--ps-font-mono:${theme.fonts.mono};--ps-heading-scale:${theme.fonts.headingSize || '1'};--ps-body-scale:${theme.fonts.bodySize || '1'}`;
+
+// Background image CSS
+const bgImg = theme.backgroundImage || {};
+const bgUrl = bgImg.url || '';
+const bgCss = bgUrl ? `body::before{content:'';position:fixed;inset:0;z-index:-1;background-image:url('${bgUrl}');background-size:${bgImg.size || 'cover'};background-position:${bgImg.position || 'center center'};background-attachment:${bgImg.attachment || 'fixed'};background-repeat:no-repeat;${parseInt(bgImg.blur || '0') > 0 ? `filter:blur(${bgImg.blur}px);transform:scale(1.1);` : ''}}` : '';
 ---
 
 <!doctype html>
@@ -49,6 +54,7 @@ const fontVars = `--ps-font-heading:${theme.fonts.heading};--ps-font-body:${them
     <title>{pageTitle}</title>
     <meta name="description" content={pageDescription} />
     <meta name="generator" content={Astro.generator} />
+    {!pwa.searchEngineVisibility && <meta name="robots" content="noindex, nofollow" />}
 
     <!-- Open Graph -->
     <meta property="og:title" content={pageTitle} />
@@ -74,7 +80,7 @@ const fontVars = `--ps-font-heading:${theme.fonts.heading};--ps-font-body:${them
     )}
 
     <!-- Theme CSS custom properties -->
-    <style set:html={`:root{${lightVars};${fontVars}}.dark{${darkVars}}`}></style>
+    <style set:html={`:root{${lightVars};${fontVars}}.dark{${darkVars}}${bgCss}`}></style>
 
     <script is:inline>
       (function() {
