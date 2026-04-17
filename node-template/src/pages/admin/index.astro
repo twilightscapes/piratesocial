@@ -457,6 +457,318 @@
       });
       CMS.registerPreviewTemplate('theme', ThemePreview);
 
+      // ── Home Page preview template ──────────────────────────────────
+      var HomePreview = createClass({
+        render: function () {
+          var entry = this.props.entry;
+          var getAsset = this.props.getAsset;
+          var blocks = entry.getIn(['data', 'blocks']);
+          var self = this;
+
+          if (!blocks || blocks.size === 0) {
+            return h('div', { style: { padding: '40px', textAlign: 'center', color: '#71717a' }},
+              h('p', { style: { fontSize: '16px' } }, 'No blocks added yet.'),
+              h('p', { style: { fontSize: '13px', marginTop: '8px' } }, 'Click "Add blocks" in the editor to get started.')
+            );
+          }
+
+          function renderBlock(block, i) {
+            var type = block.get('type');
+
+            // ── Hero Banner ──
+            if (type === 'hero') {
+              var heading = block.get('heading') || '';
+              var subheading = block.get('subheading') || '';
+              var image = block.get('image');
+              var overlay = block.get('overlay') !== false;
+              var height = block.get('height') || 'medium';
+              var heights = { small: '200px', medium: '300px', large: '400px', full: '500px' };
+              var imgSrc = '';
+              if (image) { try { imgSrc = getAsset(image).toString(); } catch(e) { imgSrc = image; } }
+
+              return h('div', { key: i, style: {
+                position: 'relative', minHeight: heights[height] || '300px',
+                borderRadius: '10px', overflow: 'hidden', marginBottom: '20px',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                background: imgSrc ? 'none' : '#18181b',
+              }},
+                imgSrc && h('img', { src: imgSrc, style: {
+                  position: 'absolute', inset: '0', width: '100%', height: '100%', objectFit: 'cover',
+                }}),
+                imgSrc && overlay && h('div', { style: {
+                  position: 'absolute', inset: '0',
+                  background: 'linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0.3), transparent)',
+                }}),
+                h('div', { style: { position: 'relative', zIndex: 2, textAlign: 'center', padding: '24px' }},
+                  heading && h('h1', { style: {
+                    fontSize: '32px', fontWeight: 700, color: imgSrc ? '#fff' : '#f4f4f5',
+                    margin: '0 0 8px 0',
+                  }}, heading),
+                  subheading && h('p', { style: {
+                    fontSize: '16px', color: imgSrc ? 'rgba(255,255,255,0.9)' : '#a1a1aa',
+                    maxWidth: '500px', margin: '0 auto',
+                  }}, subheading)
+                )
+              );
+            }
+
+            // ── Profile Card ──
+            if (type === 'profile') {
+              var layout = block.get('layout') || 'center';
+              var isRow = layout === 'row';
+              var isCard = layout === 'card';
+
+              var containerStyle = {
+                marginBottom: '20px', padding: '20px',
+                display: 'flex', gap: '16px', alignItems: 'center',
+              };
+              if (isRow) {
+                containerStyle.flexDirection = 'row';
+                containerStyle.textAlign = 'left';
+              } else {
+                containerStyle.flexDirection = 'column';
+                containerStyle.textAlign = 'center';
+              }
+              if (isCard) {
+                containerStyle.background = '#18181b';
+                containerStyle.border = '1px solid #27272a';
+                containerStyle.borderRadius = '10px';
+                containerStyle.maxWidth = '380px';
+                containerStyle.margin = '0 auto 20px auto';
+              }
+
+              return h('div', { key: i, style: containerStyle },
+                h('div', { style: {
+                  width: isCard ? '64px' : '80px', height: isCard ? '64px' : '80px',
+                  borderRadius: '50%', background: '#3f3f46', border: '2px solid #52525b',
+                  flexShrink: 0,
+                }}),
+                h('div', {},
+                  h('h2', { style: { fontSize: '20px', fontWeight: 700, color: '#f4f4f5', margin: '0 0 4px 0' }}, 'Your Name'),
+                  h('p', { style: { color: '#a1a1aa', margin: '0 0 4px 0', fontSize: '14px' }}, 'Your bio goes here'),
+                  h('p', { style: { color: '#71717a', fontSize: '12px', margin: 0 }}, '\uD83D\uDCF7 Camera \u00B7 \uD83D\uDCCD Location')
+                )
+              );
+            }
+
+            // ── Recent Posts ──
+            if (type === 'recentPosts') {
+              var heading = block.get('heading') || 'Recent Photos';
+              var count = parseInt(block.get('count') || '6', 10);
+              var columns = block.get('columns') || '3';
+              var cols = parseInt(columns, 10);
+              var displayCount = Math.min(count, 6); // show up to 6 placeholders
+
+              return h('div', { key: i, style: { marginBottom: '20px' }},
+                heading && h('h2', { style: { fontSize: '18px', fontWeight: 600, color: '#f4f4f5', marginBottom: '12px' }}, heading),
+                h('div', { style: {
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(' + cols + ', 1fr)',
+                  gap: '12px',
+                }},
+                  Array.from({ length: displayCount }).map(function(_, j) {
+                    return h('div', { key: j, style: {
+                      background: '#18181b', borderRadius: '8px',
+                      border: '1px solid #27272a', overflow: 'hidden',
+                    }},
+                      h('div', { style: {
+                        paddingBottom: '75%', background: 'linear-gradient(135deg, #27272a 0%, #1a1a2e 100%)',
+                        position: 'relative',
+                      }},
+                        h('div', { style: {
+                          position: 'absolute', inset: '0', display: 'flex',
+                          alignItems: 'center', justifyContent: 'center',
+                        }},
+                          h('span', { style: { color: '#3f3f46', fontSize: '24px' }}, '\uD83D\uDDBC')
+                        )
+                      ),
+                      h('div', { style: { padding: '10px' }},
+                        h('div', { style: { height: '12px', background: '#27272a', borderRadius: '4px', width: '70%', marginBottom: '6px' }}),
+                        h('div', { style: { height: '10px', background: '#1f1f23', borderRadius: '4px', width: '40%' }})
+                      )
+                    );
+                  })
+                ),
+                h('div', { style: { textAlign: 'center', marginTop: '14px' }},
+                  h('span', { style: { color: '#3b82f6', fontSize: '13px', textDecoration: 'underline' }}, 'View all posts \u2192')
+                )
+              );
+            }
+
+            // ── YouTube Video ──
+            if (type === 'youtube') {
+              var url = block.get('url') || '';
+              var heading = block.get('heading') || '';
+              var caption = block.get('caption') || '';
+              var layout = block.get('layout') || 'contained';
+              var videoId = '';
+              var m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&?\s]+)/);
+              if (m) videoId = m[1];
+
+              var wrapStyle = { marginBottom: '20px' };
+              if (layout === 'contained') { wrapStyle.maxWidth = '640px'; wrapStyle.margin = '0 auto 20px auto'; }
+
+              return h('div', { key: i, style: wrapStyle },
+                heading && h('h2', { style: { fontSize: '18px', fontWeight: 600, color: '#f4f4f5', marginBottom: '8px' }}, heading),
+                videoId
+                  ? h('div', { style: { position: 'relative', paddingBottom: '56.25%', borderRadius: '10px', overflow: 'hidden', background: '#000' }},
+                      h('iframe', {
+                        src: 'https://www.youtube-nocookie.com/embed/' + videoId,
+                        style: { position: 'absolute', inset: '0', width: '100%', height: '100%', border: 'none' },
+                        allow: 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture',
+                        allowFullScreen: true,
+                      })
+                    )
+                  : h('div', { style: {
+                      paddingBottom: '56.25%', background: '#18181b', borderRadius: '10px',
+                      border: '1px solid #27272a', position: 'relative',
+                    }},
+                      h('div', { style: {
+                        position: 'absolute', inset: '0', display: 'flex',
+                        alignItems: 'center', justifyContent: 'center', flexDirection: 'column',
+                      }},
+                        h('span', { style: { fontSize: '36px', marginBottom: '8px' }}, '\u25B6\uFE0F'),
+                        h('span', { style: { color: '#71717a', fontSize: '13px' }}, 'Paste a YouTube URL')
+                      )
+                    ),
+                caption && h('p', { style: { color: '#a1a1aa', fontSize: '13px', textAlign: 'center', marginTop: '8px' }}, caption)
+              );
+            }
+
+            // ── Photo Gallery ──
+            if (type === 'gallery') {
+              var heading = block.get('heading') || '';
+              var columns = block.get('columns') || '3';
+              var images = block.get('images');
+              var cols = parseInt(columns, 10);
+
+              var galleryImages = [];
+              if (images && images.size > 0) {
+                images.forEach(function(img) {
+                  var src = img.get('src');
+                  var imgSrc = '';
+                  if (src) { try { imgSrc = getAsset(src).toString(); } catch(e) { imgSrc = src; } }
+                  galleryImages.push({
+                    src: imgSrc,
+                    alt: img.get('alt') || '',
+                    caption: img.get('caption') || '',
+                  });
+                });
+              }
+
+              return h('div', { key: i, style: { marginBottom: '20px' }},
+                heading && h('h2', { style: { fontSize: '18px', fontWeight: 600, color: '#f4f4f5', marginBottom: '12px' }}, heading),
+                galleryImages.length > 0
+                  ? h('div', { style: {
+                      display: 'grid', gridTemplateColumns: 'repeat(' + cols + ', 1fr)', gap: '10px',
+                    }},
+                      galleryImages.map(function(img, j) {
+                        return h('div', { key: j, style: { position: 'relative' }},
+                          h('img', { src: img.src, alt: img.alt, style: {
+                            width: '100%', aspectRatio: '1', objectFit: 'cover', borderRadius: '8px',
+                            display: 'block',
+                          }}),
+                          img.caption && h('p', { style: { color: '#71717a', fontSize: '11px', marginTop: '4px' }}, img.caption)
+                        );
+                      })
+                    )
+                  : h('div', { style: {
+                      padding: '40px', textAlign: 'center', background: '#18181b',
+                      borderRadius: '10px', border: '1px solid #27272a',
+                    }},
+                      h('span', { style: { color: '#71717a', fontSize: '13px' }}, 'Add photos to this gallery block')
+                    )
+              );
+            }
+
+            // ── Text / Markdown ──
+            if (type === 'text') {
+              var heading = block.get('heading') || '';
+              var body = block.get('body') || '';
+              var layout = block.get('layout') || 'narrow';
+              var wrapStyle = { marginBottom: '20px' };
+              if (layout === 'narrow') { wrapStyle.maxWidth = '600px'; wrapStyle.margin = '0 auto 20px auto'; }
+
+              return h('div', { key: i, style: wrapStyle },
+                heading && h('h2', { style: { fontSize: '18px', fontWeight: 600, color: '#f4f4f5', marginBottom: '8px' }}, heading),
+                h('div', { style: { color: '#d4d4d8', lineHeight: '1.7', fontSize: '14px', whiteSpace: 'pre-wrap' }}, body || h('span', { style: { color: '#71717a', fontStyle: 'italic' }}, 'Enter some text...'))
+              );
+            }
+
+            // ── Image ──
+            if (type === 'image') {
+              var src = block.get('src');
+              var alt = block.get('alt') || '';
+              var caption = block.get('caption') || '';
+              var layout = block.get('layout') || 'contained';
+              var imgSrc = '';
+              if (src) { try { imgSrc = getAsset(src).toString(); } catch(e) { imgSrc = src; } }
+
+              var wrapStyle = { marginBottom: '20px' };
+              if (layout === 'contained') { wrapStyle.maxWidth = '640px'; wrapStyle.margin = '0 auto 20px auto'; }
+              if (layout === 'banner') { wrapStyle.maxHeight = '200px'; wrapStyle.overflow = 'hidden'; }
+
+              return h('div', { key: i, style: wrapStyle },
+                imgSrc
+                  ? h('img', { src: imgSrc, alt: alt, style: {
+                      width: '100%', borderRadius: '8px', display: 'block',
+                      objectFit: layout === 'banner' ? 'cover' : 'contain',
+                      maxHeight: layout === 'banner' ? '200px' : 'none',
+                    }})
+                  : h('div', { style: {
+                      paddingBottom: '50%', background: '#18181b', borderRadius: '10px',
+                      border: '1px solid #27272a', position: 'relative',
+                    }},
+                      h('div', { style: {
+                        position: 'absolute', inset: '0', display: 'flex',
+                        alignItems: 'center', justifyContent: 'center',
+                      }},
+                        h('span', { style: { color: '#71717a', fontSize: '13px' }}, 'Choose an image')
+                      )
+                    ),
+                caption && h('p', { style: { color: '#a1a1aa', fontSize: '13px', textAlign: 'center', marginTop: '8px' }}, caption)
+              );
+            }
+
+            // ── Location ──
+            if (type === 'location') {
+              var heading = block.get('heading') || 'Location';
+              var address = block.get('address') || '';
+              var mapUrl = block.get('mapUrl') || '';
+
+              return h('div', { key: i, style: { marginBottom: '20px' }},
+                heading && h('h2', { style: { fontSize: '18px', fontWeight: 600, color: '#f4f4f5', marginBottom: '8px' }}, heading),
+                address && h('p', { style: { color: '#a1a1aa', fontSize: '14px', whiteSpace: 'pre-line', marginBottom: '12px' }}, address),
+                mapUrl
+                  ? h('div', { style: { borderRadius: '10px', overflow: 'hidden', aspectRatio: '16/9' }},
+                      h('iframe', { src: mapUrl, style: { width: '100%', height: '100%', border: 'none' }, loading: 'lazy' })
+                    )
+                  : h('div', { style: {
+                      aspectRatio: '16/9', background: '#18181b', borderRadius: '10px',
+                      border: '1px solid #27272a', display: 'flex',
+                      alignItems: 'center', justifyContent: 'center',
+                    }},
+                      h('span', { style: { color: '#71717a', fontSize: '13px' }}, '\uD83D\uDCCD Add a map embed URL')
+                    )
+              );
+            }
+
+            // ── Unknown block type ──
+            return h('div', { key: i, style: {
+              marginBottom: '20px', padding: '16px', background: '#1c1917',
+              border: '1px solid #44403c', borderRadius: '8px',
+            }},
+              h('span', { style: { color: '#a8a29e', fontSize: '13px' }}, 'Unknown block: ' + type)
+            );
+          }
+
+          return h('div', { style: { padding: '20px 24px', maxWidth: '800px', margin: '0 auto' }},
+            blocks.map(function(block, i) { return renderBlock(block, i); })
+          );
+        },
+      });
+      CMS.registerPreviewTemplate('home', HomePreview);
+
       // Gallery preview template
       var GalleryPreview = createClass({
         render: function () {
