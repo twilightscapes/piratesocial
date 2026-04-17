@@ -9,12 +9,12 @@ const router = Router();
  * that posts the token back to the CMS via window.opener.postMessage.
  */
 
-// Step 1: Redirect to GitHub OAuth with repo scope for Decap CMS
+// Step 1: Redirect to GitHub OAuth with public repo scope for Decap CMS
 router.get('/auth', (_req, res) => {
   const params = new URLSearchParams({
     client_id: process.env.DECAP_GITHUB_CLIENT_ID || process.env.GITHUB_CLIENT_ID,
     redirect_uri: `${process.env.HUB_URL}/api/decap/callback`,
-    scope: 'repo,user',
+    scope: 'public_repo,user',
   });
   res.redirect(`https://github.com/login/oauth/authorize?${params}`);
 });
