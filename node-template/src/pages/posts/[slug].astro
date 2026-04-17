@@ -18,14 +18,14 @@ export async function getStaticPaths() {
 const { post } = Astro.props;
 const { Content } = await render(post);
 
-// Handle private posts
+// For static sites, we always render both modal and content, let client-side JS handle visibility
 const isPrivate = post.data.visibility === 'private';
-const unlocked = isPrivate ? Astro.cookies.get(`post_${cleanSlug(post.id)}`)?.value === post.data.privatePassword : true;
+const postSlug = cleanSlug(post.id);
 ---
 
 <BaseLayout title={post.data.title} description={post.data.description} image={post.data.image ? withBase(typeof post.data.image === 'string' ? post.data.image : post.data.image.src) : undefined}>
-  {isPrivate && !unlocked ? (
-    <div class="mx-auto max-w-4xl">
+  {isPrivate && (
+    <div id="private-modal" class="mx-auto max-w-4xl" style="display: none;">
       <!-- Private post modal -->
       <div class="min-h-screen flex items-start justify-center pt-20 -mx-4 px-4">
         <div class="w-full max-w-sm rounded-lg border border-theme-border bg-theme-card p-8 text-center">
@@ -39,43 +39,10 @@ const unlocked = isPrivate ? Astro.cookies.get(`post_${cleanSlug(post.id)}`)?.va
           </form>
         </div>
       </div>
-      <script define:vars={{ postId: cleanSlug(post.id), correctPassword: post.data.privatePassword }}>
-        const form = document.getElementById('unlock-form');
-        const input = document.getElementById('post-password');
-        const errorMsg = document.getElementById('error-msg');
-        
-        if (!correctPassword) {
-          console.error('No password set for this private post');
-          errorMsg.textContent = 'Error: No password configured.';
-          errorMsg.classList.remove('hidden');
-        }
-        
-        input.addEventListener('focus', () => {
-          errorMsg.classList.add('hidden');
-        });
-        
-        form.addEventListener('submit', async (e) => {
-          e.preventDefault();
-          const password = input.value.trim();
-          const expected = correctPassword ? correctPassword.trim() : '';
-          
-          console.log('Password check:', { entered: password, expected: expected, match: password === expected });
-          
-          if (password === expected && password.length > 0) {
-            console.log('Password correct, setting cookie and reloading');
-            document.cookie = `post_${postId}=${password}; path=/; max-age=2592000; SameSite=Lax`;
-            location.reload();
-          } else {
-            console.log('Password incorrect');
-            errorMsg.classList.remove('hidden');
-            input.value = '';
-            input.focus();
-          }
-        });
-      </script>
     </div>
-  ) : (
-  <article class="mx-auto max-w-4xl">
+  )}
+  
+  <article id="post-content" class="mx-auto max-w-4xl" style={isPrivate ? "display: none;" : ""}>
     <!-- Hero Image -->
     {post.data.image && (
       <div class="mb-8 overflow-hidden rounded-lg">
@@ -120,7 +87,71 @@ const unlocked = isPrivate ? Astro.cookies.get(`post_${cleanSlug(post.id)}`)?.va
     )}
 
     <!-- Social interactions (client-side) -->
-    {enableSocial && <SocialActions postSlug={cleanSlug(post.id)} />}
+    {enableSocial && <SocialActions postSlug={postSlug} />}
   </article>
+
+  {isPrivate && (
+    <script define:vars={{ postId: postSlug, correctPassword: post.data.privatePassword }}>
+      const privateModal = document.getElementById('private-modal');
+      const postContent = document.getElementById('post-content');
+      const form = document.getElementById('unlock-form');
+      const input = document.getElementById('post-password');
+      const errorMsg = document.getElementById('error-msg');
+      
+      // Check if already unlocked on page load
+      function checkUnlocked() {
+        const cookies = document.cookie.split('; ').reduce((acc, cookie) => {
+          const [name, value] = cookie.split('=');
+          acc[name] = value;
+          return acc;
+        }, {});
+        
+        const cookieValue = cookies[`post_${postId}`];
+        const isUnlocked = cookieValue === correctPassword;
+        
+        console.log('Page load - checking unlock:', { cookieValue, correctPassword, isUnlocked });
+        
+        if (isUnlocked) {
+          privateModal.style.display = 'none';
+          postContent.style.display = '';
+        }
+      }
+      
+      // Check on page load
+      checkUnlocked();
+      
+      if (!correctPassword) {
+        console.error('No password set for this private post');
+        errorMsg.textContent = 'Error: No password configured.';
+        errorMsg.classList.remove('hidden');
+      }
+      
+      input.addEventListener('focus', () => {
+        errorMsg.classList.add('hidden');
+      });
+      
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const password = input.value.trim();
+        const expected = correctPassword ? correctPassword.trim() : '';
+        
+        console.log('Password check:', { entered: password, expected: expected, match: password === expected });
+        
+        if (password === expected && password.length > 0) {
+          console.log('Password correct, setting cookie');
+          document.cookie = `post_${postId}=${password}; path=/; max-age=2592000`;
+          
+          // Show content and hide modal
+          privateModal.style.display = 'none';
+          postContent.style.display = '';
+          console.log('Content unlocked');
+        } else {
+          console.log('Password incorrect');
+          errorMsg.classList.remove('hidden');
+          input.value = '';
+          input.focus();
+        }
+      });
+    </script>
   )}
 </BaseLayout>
