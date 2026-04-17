@@ -81,8 +81,9 @@ router.get('/github/callback', async (req, res) => {
       return res.redirect(`${process.env.HUB_URL}${stateRedirect}?token=${jwtToken}`);
     }
 
-    // New users go to setup wizard; returning users go to their site
-    if (!user.nodeCreated) {
+    // Determine redirect: existing users or those with a valid siteUrl go to their site
+    // Only force setup if they're truly new and haven't set up a site yet
+    if (!user.nodeCreated && !user.siteUrl) {
       res.redirect(`${process.env.HUB_URL}/setup.html?token=${jwtToken}`);
     } else {
       const redirectUrl = user.siteUrl || process.env.HUB_URL;
