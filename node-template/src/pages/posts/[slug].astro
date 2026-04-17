@@ -109,8 +109,6 @@ const postSlug = cleanSlug(post.id);
         const cookieValue = cookies[`post_${postId}`];
         const isUnlocked = cookieValue === correctPassword;
         
-        console.log('Page load - checking unlock:', { cookieValue, correctPassword, isUnlocked });
-        
         if (isUnlocked) {
           privateModal.style.display = 'none';
           postContent.style.display = '';
@@ -121,7 +119,6 @@ const postSlug = cleanSlug(post.id);
       checkUnlocked();
       
       if (!correctPassword) {
-        console.error('No password set for this private post');
         errorMsg.textContent = 'Error: No password configured.';
         errorMsg.classList.remove('hidden');
       }
@@ -135,18 +132,13 @@ const postSlug = cleanSlug(post.id);
         const password = input.value.trim();
         const expected = correctPassword ? correctPassword.trim() : '';
         
-        console.log('Password check:', { entered: password, expected: expected, match: password === expected });
-        
         if (password === expected && password.length > 0) {
-          console.log('Password correct, setting cookie');
           document.cookie = `post_${postId}=${password}; path=/; max-age=2592000`;
           
           // Show content and hide modal
           privateModal.style.display = 'none';
           postContent.style.display = '';
-          console.log('Content unlocked');
         } else {
-          console.log('Password incorrect');
           errorMsg.classList.remove('hidden');
           input.value = '';
           input.focus();
