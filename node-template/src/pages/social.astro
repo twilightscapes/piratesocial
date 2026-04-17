@@ -7,22 +7,22 @@ const sl = labels.social;
 
 <BaseLayout title="Social">
   <div class="mx-auto max-w-3xl">
-    <div class="mb-8 flex items-center justify-between">
-      <h1 class="text-2xl font-bold font-heading">{sl.heading}</h1>
-      <div class="flex gap-2 flex-wrap">
-        <button id="tab-squads" class="rounded bg-theme-input-bg px-3 py-1.5 text-sm hover:bg-theme-surface-hover transition">
+    <div class="sticky top-[41px] md:top-[57px] z-30 -mx-4 px-3 py-2 md:px-4 md:py-4 mb-4 md:mb-8 flex items-center justify-between bg-theme-bg/95 backdrop-blur supports-[backdrop-filter]:bg-theme-bg/80 border-b border-theme-border">
+      <h1 class="text-lg md:text-2xl font-bold font-heading whitespace-nowrap mr-3">{sl.heading}</h1>
+      <div class="flex gap-1 md:gap-2">
+        <button id="tab-squads" class="rounded bg-theme-input-bg px-2 py-1 text-xs md:px-3 md:py-1.5 md:text-sm hover:bg-theme-surface-hover transition">
           {sl.tabSquads}
         </button>
-        <button id="tab-timeline" class="rounded bg-theme-input-bg px-3 py-1.5 text-sm hover:bg-theme-surface-hover transition active-tab">
+        <button id="tab-timeline" class="rounded bg-theme-input-bg px-2 py-1 text-xs md:px-3 md:py-1.5 md:text-sm hover:bg-theme-surface-hover transition active-tab">
           {sl.tabTimeline}
         </button>
-        <button id="tab-bluesky" class="rounded bg-theme-input-bg px-3 py-1.5 text-sm hover:bg-theme-surface-hover transition">
+        <button id="tab-bluesky" class="rounded bg-theme-input-bg px-2 py-1 text-xs md:px-3 md:py-1.5 md:text-sm hover:bg-theme-surface-hover transition">
           {sl.tabBluesky}
         </button>
-        <button id="tab-discover" class="rounded bg-theme-input-bg px-3 py-1.5 text-sm hover:bg-theme-surface-hover transition">
+        <button id="tab-discover" class="rounded bg-theme-input-bg px-2 py-1 text-xs md:px-3 md:py-1.5 md:text-sm hover:bg-theme-surface-hover transition">
           {sl.tabDiscover}
         </button>
-        <button id="tab-people" class="rounded bg-theme-input-bg px-3 py-1.5 text-sm hover:bg-theme-surface-hover transition">
+        <button id="tab-people" class="rounded bg-theme-input-bg px-2 py-1 text-xs md:px-3 md:py-1.5 md:text-sm hover:bg-theme-surface-hover transition">
           {sl.tabPeople}
         </button>
       </div>
