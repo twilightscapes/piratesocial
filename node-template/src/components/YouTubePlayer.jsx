@@ -73,10 +73,13 @@ function InteractivePlayer({ playlist, audioOnly, isFloating, heading, caption, 
   const [position, setPosition] = useState({ side: 'bottom' }); // bottom, left, right
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [dragOffset, setDragOffset] = useState(null); // {x, y} when dragging
+  const [dragPos, setDragPos] = useState(null); // {x, y} custom position from drag
   const playerRef = useRef(null);
   const containerRef = useRef(null);
   const iframeRef = useRef(null);
   const progressInterval = useRef(null);
+  const isDragging = useRef(false);
   const hasPlaylist = playlist.length > 1;
   const current = playlist[currentIndex] || playlist[0];
 
@@ -100,12 +103,16 @@ function InteractivePlayer({ playlist, audioOnly, isFloating, heading, caption, 
 
       playerRef.current = new window.YT.Player(iframeRef.current, {
         videoId: current.id,
+        host: 'https://www.youtube-nocookie.com',
         playerVars: {
           autoplay: 1,
           controls: 0,
           modestbranding: 1,
           rel: 0,
           playsinline: 1,
+          iv_load_policy: 3,
+          disablekb: 1,
+          fs: 0,
         },
         events: {
           onReady: (e) => {
@@ -204,10 +211,53 @@ function InteractivePlayer({ playlist, audioOnly, isFloating, heading, caption, 
   };
 
   const cycleSide = useCallback(() => {
+    setDragPos(null); // reset custom drag position
     const sides = ['bottom', 'right', 'left'];
     const idx = sides.indexOf(position.side);
     setPosition({ side: sides[(idx + 1) % sides.length] });
   }, [position.side]);
+
+  // ── Drag handlers for floating player ──
+  const onDragStart = useCallback((e) => {
+    if (!isFloating || !containerRef.current) return;
+    // Ignore if target is a button/input/range
+    if (e.target.closest('button, input, [role="button"]')) return;
+    e.preventDefault();
+    const touch = e.touches ? e.touches[0] : e;
+    const rect = containerRef.current.getBoundingClientRect();
+    isDragging.current = true;
+    setDragOffset({ x: touch.clientX - rect.left, y: touch.clientY - rect.top });
+  }, [isFloating]);
+
+  const onDragMove = useCallback((e) => {
+    if (!isDragging.current || !dragOffset) return;
+    e.preventDefault();
+    const touch = e.touches ? e.touches[0] : e;
+    const x = Math.max(0, Math.min(window.innerWidth - 60, touch.clientX - dragOffset.x));
+    const y = Math.max(0, Math.min(window.innerHeight - 60, touch.clientY - dragOffset.y));
+    setDragPos({ x, y });
+  }, [dragOffset]);
+
+  const onDragEnd = useCallback(() => {
+    isDragging.current = false;
+    setDragOffset(null);
+  }, []);
+
+  useEffect(() => {
+    if (!isFloating) return;
+    const moveHandler = (e) => onDragMove(e);
+    const endHandler = () => onDragEnd();
+    window.addEventListener('mousemove', moveHandler);
+    window.addEventListener('mouseup', endHandler);
+    window.addEventListener('touchmove', moveHandler, { passive: false });
+    window.addEventListener('touchend', endHandler);
+    return () => {
+      window.removeEventListener('mousemove', moveHandler);
+      window.removeEventListener('mouseup', endHandler);
+      window.removeEventListener('touchmove', moveHandler);
+      window.removeEventListener('touchend', endHandler);
+    };
+  }, [isFloating, onDragMove, onDragEnd]);
 
   // ── Docked audio player (inline on page) ──
   if (!isFloating) {
@@ -311,12 +361,15 @@ function InteractivePlayer({ playlist, audioOnly, isFloating, heading, caption, 
     right: { bottom: '72px', right: '16px', maxWidth: minimized ? '48px' : '340px' },
     left: { bottom: '72px', left: '16px', maxWidth: minimized ? '48px' : '340px' },
   };
-  const pos = posStyles[position.side] || posStyles.bottom;
+  const pos = dragPos
+    ? { left: `${dragPos.x}px`, top: `${dragPos.y}px`, maxWidth: minimized ? '48px' : '380px' }
+    : (posStyles[position.side] || posStyles.bottom);
 
   return (
     <div ref={containerRef}
       style={{
-        position: 'fixed', zIndex: 9999, transition: 'all 0.3s ease',
+        position: 'fixed', zIndex: 9999,
+        transition: isDragging.current ? 'none' : 'all 0.3s ease',
         ...pos,
         width: minimized ? '48px' : '100%',
       }}
@@ -340,12 +393,17 @@ function InteractivePlayer({ playlist, audioOnly, isFloating, heading, caption, 
         </button>
       ) : (
         <div class="rounded-xl shadow-2xl border overflow-hidden" style="background:var(--ps-card-bg);border-color:var(--ps-card-border);backdrop-filter:blur(20px)">
-          {/* Top bar with drag handle + minimize */}
-          <div class="flex items-center justify-between px-3 py-1.5 border-b" style="border-color:var(--ps-border)">
+          {/* Top bar — drag handle + minimize */}
+          <div class="flex items-center justify-between px-3 py-1.5 border-b"
+            style="border-color:var(--ps-border);cursor:grab;user-select:none;-webkit-user-select:none"
+            onMouseDown={onDragStart}
+            onTouchStart={onDragStart}
+          >
             <button onClick={cycleSide} class="text-xs px-1.5 py-0.5 rounded" style="color:var(--ps-text-faint)" aria-label="Change position" title="Change position">
               ⇄
             </button>
-            <span class="text-xs font-medium truncate mx-2" style="color:var(--ps-text-faint)">
+            <span class="text-xs font-medium truncate mx-2 flex items-center gap-1" style="color:var(--ps-text-faint)">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" style="opacity:0.5"><circle cx="9" cy="5" r="2"/><circle cx="15" cy="5" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="9" cy="19" r="2"/><circle cx="15" cy="19" r="2"/></svg>
               {audioOnly ? '♫ Audio Player' : '▶ Player'}
             </span>
             <button onClick={() => setMinimized(true)} class="text-xs px-1.5 py-0.5 rounded" style="color:var(--ps-text-faint)" aria-label="Minimize">
