@@ -24,7 +24,7 @@ const defaults = {
   youtubeVideo: 'YouTube video',
 };
 
-export default function YouTubePlayer({ url, heading, caption, audioOnly, display = 'docked', tracks, layout = 'contained', labels: userLabels = {}, startTime, endTime }) {
+export default function YouTubePlayer({ url, heading, caption, audioOnly, display = 'docked', tracks, layout = 'contained', labels: userLabels = {}, startTime, endTime, useNativeControls = false }) {
   const L = { ...defaults, ...userLabels };
   const isFloating = display === 'floating';
 
@@ -62,10 +62,11 @@ export default function YouTubePlayer({ url, heading, caption, audioOnly, displa
     caption={caption}
     layout={layout}
     L={L}
+    useNativeControls={useNativeControls}
   />;
 }
 
-function InteractivePlayer({ playlist, audioOnly, isFloating, heading, caption, layout, L }) {
+function InteractivePlayer({ playlist, audioOnly, isFloating, heading, caption, layout, L, useNativeControls }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [started, setStarted] = useState(false);
@@ -158,7 +159,7 @@ function InteractivePlayer({ playlist, audioOnly, isFloating, heading, caption, 
         videoId: first.id,
         playerVars: {
           autoplay: 0,
-          controls: 0,
+          controls: useNativeControls ? 1 : 0,
           modestbranding: 1,
           rel: 0,
           playsinline: 1,
@@ -443,9 +444,14 @@ function InteractivePlayer({ playlist, audioOnly, isFloating, heading, caption, 
               <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" style="opacity:0.5"><circle cx="9" cy="5" r="2"/><circle cx="15" cy="5" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="9" cy="19" r="2"/><circle cx="15" cy="19" r="2"/></svg>
               {audioOnly ? L.audioPlayer : L.videoPlayer}
             </span>
-            <button onClick={() => { playerRef.current?.pauseVideo?.(); setClosed(true); }} class="text-xs px-1.5 py-0.5 rounded" style="color:var(--ps-text-faint)" aria-label="Close">
-              ✕
-            </button>
+            <div class="flex items-center gap-1">
+              <button onClick={() => setMinimized(true)} class="text-xs px-1.5 py-0.5 rounded" style="color:var(--ps-text-faint)" aria-label={L.minimize} title={L.minimize}>
+                ─
+              </button>
+              <button onClick={() => { playerRef.current?.pauseVideo?.(); setClosed(true); }} class="text-xs px-1.5 py-0.5 rounded" style="color:var(--ps-text-faint)" aria-label="Close" title="Close">
+                ✕
+              </button>
+            </div>
           </div>
 
           {started && (

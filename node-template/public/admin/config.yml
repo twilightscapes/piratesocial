@@ -165,6 +165,7 @@ collections:
                     default: "docked"
                     hint: "Floating player persists across pages and can be minimized"
                   - { label: "Audio Only", name: audioOnly, widget: boolean, default: false, hint: "Hide video, play audio only" }
+                  - { label: "Show YouTube Controls", name: useNativeControls, widget: boolean, default: false, hint: "Show native YouTube controls instead of custom player controls. Note: YouTube may show ads with native controls." }
                   - { label: "Start Time (seconds)", name: startTime, widget: number, required: false, value_type: int, min: 0, hint: "Start playback at this time (in seconds). Leave blank to start from beginning." }
                   - { label: "End Time (seconds)", name: endTime, widget: number, required: false, value_type: int, min: 0, hint: "Stop playback at this time (in seconds). Leave blank to play to end." }
                   - label: "Additional Tracks"
@@ -325,6 +326,7 @@ collections:
                 default: "docked"
                 hint: "Floating player persists across pages and can be minimized"
               - { label: "Audio Only", name: audioOnly, widget: boolean, default: false, hint: "Hide video, play audio only" }
+              - { label: "Show YouTube Controls", name: useNativeControls, widget: boolean, default: false, hint: "Show native YouTube controls instead of custom player controls. Note: YouTube may show ads with native controls." }
               - { label: "Start Time (seconds)", name: startTime, widget: number, required: false, value_type: int, min: 0, hint: "Start playback at this time (in seconds). Leave blank to start from beginning." }
               - { label: "End Time (seconds)", name: endTime, widget: number, required: false, value_type: int, min: 0, hint: "Stop playback at this time (in seconds). Leave blank to play to end." }
               - label: "Additional Tracks"
