@@ -100,6 +100,38 @@ collections:
           - { label: Location, name: location, widget: string, required: false }
           - { label: Camera, name: camera, widget: string, required: false }
 
+      - label: PWA & Open Graph
+        name: pwa
+        file: src/data/pwa.json
+        fields:
+          - { label: "App Name", name: name, widget: string, default: "Pirate Social", hint: "Full name shown in app install prompts and splash screens" }
+          - { label: "Short Name", name: shortName, widget: string, default: "Pirate", hint: "Shown on the home screen icon (keep under 12 chars)" }
+          - { label: "App Description", name: description, widget: text, default: "A photography site on the Pirate Social network", hint: "Shown in app store listings and install prompts" }
+          - label: "Start URL"
+            name: startUrl
+            widget: string
+            default: "/"
+            hint: "The page that opens when the PWA is launched"
+          - label: "Display Mode"
+            name: display
+            widget: select
+            options:
+              - { label: "Standalone (app-like, no browser bar)", value: "standalone" }
+              - { label: "Fullscreen", value: "fullscreen" }
+              - { label: "Minimal UI (small browser bar)", value: "minimal-ui" }
+              - { label: "Browser (normal tab)", value: "browser" }
+            default: "standalone"
+          - { label: "Background Color", name: backgroundColor, widget: color, enableAlpha: false, default: "#09090b", hint: "Splash screen background color" }
+          - { label: "Theme Color", name: themeColor, widget: color, enableAlpha: false, default: "#09090b", hint: "Browser toolbar and status bar color" }
+          - { label: "Icon 192×192", name: icon192, widget: image, default: "/images/icon192.png", hint: "Used for home screen icon and small displays" }
+          - { label: "Icon 512×512", name: icon512, widget: image, default: "/images/icon512.png", hint: "Used for splash screens and app store listings" }
+          - { label: "Screenshot", name: screenshot, widget: image, required: false, default: "/images/screenshot.png", hint: "App preview image (1280×720 recommended)" }
+          - { label: "Default OG Image", name: ogImage, widget: image, default: "/images/icon512.png", hint: "Fallback image for social media sharing when a page has no image" }
+          - { label: "OG Title Override", name: ogTitle, widget: string, required: false, hint: "Override the default Open Graph title (leave blank to use site title)" }
+          - { label: "OG Description Override", name: ogDescription, widget: text, required: false, hint: "Override the default OG description (leave blank to use site description)" }
+          - { label: "Favicon", name: favicon, widget: image, default: "/images/logoImage.svg", hint: "Browser tab icon (SVG or PNG)" }
+          - { label: "Apple Touch Icon", name: appleTouchIcon, widget: image, default: "/images/icon192.png", hint: "Icon for iOS home screen bookmark" }
+
       - label: Theme
         name: theme
         file: src/data/theme.json
