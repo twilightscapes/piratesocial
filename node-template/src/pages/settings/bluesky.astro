@@ -8,47 +8,47 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 <BaseLayout title="Bluesky Settings">
   <div class="mx-auto max-w-xl">
     <h1 class="text-2xl font-bold mb-6">Bluesky Integration</h1>
-    <p class="text-zinc-400 text-sm mb-8">
+    <p class="text-theme-muted text-sm mb-8">
       Connect your Bluesky account to automatically cross-post your photos.
       New posts published to your site will appear on Bluesky with images and links back to your site.
     </p>
 
-    <div id="auth-required" class="hidden text-center py-12 text-zinc-500">
+    <div id="auth-required" class="hidden text-center py-12 text-theme-faint">
       <p>Sign in to manage your Bluesky connection</p>
-      <a href={`${base}/social/`} class="mt-4 inline-block rounded bg-white text-black px-4 py-2 text-sm font-medium hover:bg-zinc-200 transition">
+      <a href={`${base}/social/`} class="mt-4 inline-block rounded bg-theme-primary text-white px-4 py-2 text-sm font-medium hover:bg-theme-primary-hover transition">
         Sign in with GitHub
       </a>
     </div>
 
     <div id="bluesky-settings" class="hidden space-y-6">
       <!-- Status card -->
-      <div id="status-card" class="rounded-lg border border-zinc-800 bg-zinc-900 p-6">
+      <div id="status-card" class="rounded-lg border border-theme-card-border bg-theme-card p-6">
         <div class="flex items-center justify-between mb-4">
           <h2 class="text-lg font-semibold">Connection Status</h2>
           <span id="status-badge" class="text-xs px-2 py-1 rounded-full"></span>
         </div>
-        <div id="status-details" class="text-sm text-zinc-400"></div>
+        <div id="status-details" class="text-sm text-theme-muted"></div>
       </div>
 
       <!-- Connect form (shown when not connected) -->
-      <div id="connect-form" class="hidden rounded-lg border border-zinc-800 bg-zinc-900 p-6">
+      <div id="connect-form" class="hidden rounded-lg border border-theme-card-border bg-theme-card p-6">
         <h2 class="text-lg font-semibold mb-4">Connect Bluesky</h2>
-        <p class="text-sm text-zinc-400 mb-4">
-          Use an <a href="https://bsky.app/settings/app-passwords" target="_blank" class="text-blue-400 hover:underline">App Password</a> — never your main password.
+        <p class="text-sm text-theme-muted mb-4">
+          Use an <a href="https://bsky.app/settings/app-passwords" target="_blank" class="text-theme-primary hover:underline">App Password</a> — never your main password.
         </p>
         <form id="bsky-connect-form" class="space-y-4">
           <div>
             <label for="bsky-handle" class="block text-sm font-medium mb-1">Bluesky Handle</label>
             <input type="text" id="bsky-handle" placeholder="yourname.bsky.social"
-              class="w-full rounded bg-zinc-800 border border-zinc-700 px-3 py-2 text-sm focus:outline-none focus:border-blue-500" />
+              class="w-full rounded bg-theme-input-bg border border-theme-input-border px-3 py-2 text-sm focus:outline-none focus:border-theme-primary" />
           </div>
           <div>
             <label for="bsky-password" class="block text-sm font-medium mb-1">App Password</label>
             <input type="password" id="bsky-password" placeholder="xxxx-xxxx-xxxx-xxxx"
-              class="w-full rounded bg-zinc-800 border border-zinc-700 px-3 py-2 text-sm focus:outline-none focus:border-blue-500" />
+              class="w-full rounded bg-theme-input-bg border border-theme-input-border px-3 py-2 text-sm focus:outline-none focus:border-theme-primary" />
           </div>
           <div id="connect-error" class="hidden text-red-400 text-sm"></div>
-          <button type="submit" class="w-full rounded bg-blue-600 px-4 py-2 text-sm font-medium hover:bg-blue-500 transition">
+          <button type="submit" class="w-full rounded bg-theme-primary px-4 py-2 text-sm font-medium text-white hover:bg-theme-primary-hover transition">
             Connect Bluesky Account
           </button>
         </form>
@@ -110,7 +110,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       toggleBtn.className = `flex-1 rounded px-4 py-2 text-sm font-medium transition ${data.enabled ? 'bg-yellow-700 hover:bg-yellow-600' : 'bg-green-700 hover:bg-green-600'}`;
     } else {
       badge.textContent = 'Not Connected';
-      badge.className = 'text-xs px-2 py-1 rounded-full bg-zinc-700 text-zinc-300';
+      badge.className = 'text-xs px-2 py-1 rounded-full bg-theme-surface-hover text-theme-text';
       details.innerHTML = '<p>No Bluesky account connected.</p>';
       connectForm.classList.remove('hidden');
       connectedActions.classList.add('hidden');

@@ -15,11 +15,11 @@ const { Content } = await gallery.render();
 <BaseLayout title={gallery.data.title} description={gallery.data.description}>
   <article class="mx-auto max-w-5xl">
     <header class="mb-8">
-      <h1 class="text-3xl font-bold">{gallery.data.title}</h1>
+      <h1 class="text-3xl font-bold font-heading">{gallery.data.title}</h1>
       {gallery.data.description && (
-        <p class="mt-2 text-zinc-400">{gallery.data.description}</p>
+        <p class="mt-2 text-theme-muted">{gallery.data.description}</p>
       )}
-      <p class="mt-1 text-sm text-zinc-500">
+      <p class="mt-1 text-sm text-theme-faint">
         {gallery.data.photos.length} photos &middot;
         <time datetime={gallery.data.pubDate.toISOString()}>
           {gallery.data.pubDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
@@ -35,7 +35,7 @@ const { Content } = await gallery.render();
     />
 
     <!-- Text content -->
-    <div class="prose prose-invert prose-zinc mt-8 max-w-none">
+    <div class="prose prose-zinc dark:prose-invert mt-8 max-w-none">
       <Content />
     </div>
 

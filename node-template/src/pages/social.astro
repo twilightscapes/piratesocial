@@ -6,21 +6,21 @@ import { siteConfig } from '../lib/config';
 <BaseLayout title="Social">
   <div class="mx-auto max-w-3xl">
     <div class="mb-8 flex items-center justify-between">
-      <h1 class="text-2xl font-bold">Social Feed</h1>
+      <h1 class="text-2xl font-bold font-heading">Social Feed</h1>
       <div class="flex gap-2 flex-wrap">
-        <button id="tab-squads" class="rounded bg-zinc-800 px-3 py-1.5 text-sm hover:bg-zinc-700 transition">
+        <button id="tab-squads" class="rounded bg-theme-input-bg px-3 py-1.5 text-sm hover:bg-theme-surface-hover transition">
           Squads
         </button>
-        <button id="tab-timeline" class="rounded bg-zinc-800 px-3 py-1.5 text-sm hover:bg-zinc-700 transition active-tab">
+        <button id="tab-timeline" class="rounded bg-theme-input-bg px-3 py-1.5 text-sm hover:bg-theme-surface-hover transition active-tab">
           Timeline
         </button>
-        <button id="tab-bluesky" class="rounded bg-zinc-800 px-3 py-1.5 text-sm hover:bg-zinc-700 transition">
+        <button id="tab-bluesky" class="rounded bg-theme-input-bg px-3 py-1.5 text-sm hover:bg-theme-surface-hover transition">
           Bluesky
         </button>
-        <button id="tab-discover" class="rounded bg-zinc-800 px-3 py-1.5 text-sm hover:bg-zinc-700 transition">
+        <button id="tab-discover" class="rounded bg-theme-input-bg px-3 py-1.5 text-sm hover:bg-theme-surface-hover transition">
           Discover
         </button>
-        <button id="tab-people" class="rounded bg-zinc-800 px-3 py-1.5 text-sm hover:bg-zinc-700 transition">
+        <button id="tab-people" class="rounded bg-theme-input-bg px-3 py-1.5 text-sm hover:bg-theme-surface-hover transition">
           People
         </button>
       </div>
@@ -28,9 +28,9 @@ import { siteConfig } from '../lib/config';
 
     <!-- Timeline container -->
     <div id="feed-container" class="space-y-6">
-      <div class="text-center text-zinc-500 py-12">
+      <div class="text-center text-theme-faint py-12">
         <p>Sign in to see your timeline</p>
-        <button id="social-login" class="mt-4 rounded bg-white text-black px-4 py-2 text-sm font-medium hover:bg-zinc-200 transition">
+        <button id="social-login" class="mt-4 rounded bg-theme-primary text-white px-4 py-2 text-sm font-medium hover:bg-theme-primary-hover transition">
           Sign in with GitHub
         </button>
       </div>
@@ -38,7 +38,7 @@ import { siteConfig } from '../lib/config';
 
     <!-- Scroll sentinel for infinite scroll -->
     <div id="scroll-sentinel" class="mt-8 flex justify-center py-4 hidden">
-      <div class="loader-spinner h-6 w-6 border-2 border-zinc-600 border-t-zinc-300 rounded-full animate-spin"></div>
+      <div class="loader-spinner h-6 w-6 border-2 border-theme-border border-t-theme-muted rounded-full animate-spin"></div>
     </div>
   </div>
 </BaseLayout>
@@ -141,8 +141,8 @@ import { siteConfig } from '../lib/config';
   // Tab switching
   document.querySelectorAll('[id^="tab-"]').forEach(btn => {
     btn.addEventListener('click', () => {
-      document.querySelector('.active-tab')?.classList.remove('active-tab', 'bg-zinc-600');
-      btn.classList.add('active-tab', 'bg-zinc-600');
+      document.querySelector('.active-tab')?.classList.remove('active-tab', 'bg-theme-surface-hover');
+      btn.classList.add('active-tab', 'bg-theme-surface-hover');
       currentTab = btn.id.replace('tab-', '');
       currentPage = 1;
       bskyCursor = null;
@@ -160,7 +160,7 @@ import { siteConfig } from '../lib/config';
     if (isLoading) return;
     isLoading = true;
     if (!append) {
-      feedContainer.innerHTML = '<div class="text-center py-8 text-zinc-500">Loading...</div>';
+      feedContainer.innerHTML = '<div class="text-center py-8 text-theme-faint">Loading...</div>';
       hasMore = true;
     }
     scrollSentinel.classList.toggle('hidden', !append);
@@ -182,7 +182,7 @@ import { siteConfig } from '../lib/config';
         const session = await ensureBskySession();
         console.log('[PS] Bluesky session:', session ? 'got accessJwt' : 'NONE');
         if (!session?.accessJwt) {
-          feedContainer.innerHTML = '<div class="text-center py-8 text-zinc-500">Connect your Bluesky account in Settings to see your feed</div>';
+          feedContainer.innerHTML = '<div class="text-center py-8 text-theme-faint">Connect your Bluesky account in Settings to see your feed</div>';
           isLoading = false;
           hasMore = false;
           scrollSentinel.classList.add('hidden');
@@ -259,33 +259,33 @@ import { siteConfig } from '../lib/config';
       // Author line: Pirate user or external feed info
       const authorHtml = isExternal
         ? `<div class="flex items-center gap-2">
-            ${post.feed?.iconUrl ? `<img src="${escapeHtml(post.feed.iconUrl)}" class="h-8 w-8 rounded" onerror="this.style.display='none'" />` : '<div class="h-8 w-8 rounded bg-zinc-700 flex items-center justify-center text-zinc-400 text-xs">RSS</div>'}
+            ${post.feed?.iconUrl ? `<img src="${escapeHtml(post.feed.iconUrl)}" class="h-8 w-8 rounded" onerror="this.style.display='none'" />` : '<div class="h-8 w-8 rounded bg-theme-surface-hover flex items-center justify-center text-theme-muted text-xs">RSS</div>'}
             <div>
               <span class="font-medium text-sm">${escapeHtml(post.feed?.title || post.author || 'External')}</span>
-              <span class="ml-2 text-xs px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400">RSS</span>
-              <time class="block text-xs text-zinc-500">${new Date(post.pubDate).toLocaleDateString()}</time>
+              <span class="ml-2 text-xs px-1.5 py-0.5 rounded bg-theme-input-bg text-theme-muted">RSS</span>
+              <time class="block text-xs text-theme-faint">${new Date(post.pubDate).toLocaleDateString()}</time>
             </div>
           </div>`
         : `<div class="flex items-center gap-3">
             ${post.user?.avatarUrl ? `<img src="${escapeHtml(post.user.avatarUrl)}" class="h-8 w-8 rounded-full" />` : ''}
             <div>
               <a href="${hubUrl}/../${escapeHtml(post.user?.username || '')}" class="font-medium text-sm hover:underline">${escapeHtml(post.user?.displayName || post.user?.username || 'Unknown')}</a>
-              <time class="block text-xs text-zinc-500">${new Date(post.pubDate).toLocaleDateString()}</time>
+              <time class="block text-xs text-theme-faint">${new Date(post.pubDate).toLocaleDateString()}</time>
             </div>
           </div>`;
 
       // Interaction bar: only Pirate posts have likes/comments
-      const shareBtn = `<button class="share-btn hover:text-green-400 transition" data-url="${escapeHtml(post.link || '')}" data-title="${escapeHtml(post.title || '')}">↗ Share</button>`;
+      const shareBtn = `<button class="share-btn hover:text-green-500 transition" data-url="${escapeHtml(post.link || '')}" data-title="${escapeHtml(post.title || '')}">↗ Share</button>`;
       const actionsHtml = isExternal
-        ? `<a href="${escapeHtml(post.link)}" target="_blank" rel="noopener noreferrer" class="hover:text-white">↗ Read</a>${shareBtn}`
+        ? `<a href="${escapeHtml(post.link)}" target="_blank" rel="noopener noreferrer" class="hover:text-theme-text">↗ Read</a>${shareBtn}`
         : `<button class="like-btn hover:text-red-400 transition ${post.hasLiked ? 'text-red-400' : ''}" data-post-id="${post.id}">
               ${post.hasLiked ? '♥' : '♡'} ${post.likeCount || post._count?.likes || 0}
             </button>
-            <button class="comment-btn hover:text-blue-400 transition" data-post-id="${post.id}">
+            <button class="comment-btn hover:text-theme-primary transition" data-post-id="${post.id}">
               💬 ${post.commentCount || post._count?.comments || 0}
             </button>
             ${shareBtn}
-            ${post.link ? `<a href="${escapeHtml(post.link)}" target="_blank" class="hover:text-white ml-auto">↗ View</a>` : ''}`;
+            ${post.link ? `<a href="${escapeHtml(post.link)}" target="_blank" class="hover:text-theme-text ml-auto">↗ View</a>` : ''}`;
 
       // Build embed HTML for rich content (Bluesky images, videos, link cards, quotes)
       const embed = post.embedData || {};
@@ -311,12 +311,12 @@ import { siteConfig } from '../lib/config';
         if (ytId) {
           embedHtml += `<div class="mt-2 rounded overflow-hidden bg-black aspect-video"><iframe src="https://www.youtube.com/embed/${ytId}" class="w-full h-full" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`;
         } else {
-          embedHtml += `<a href="${escapeHtml(embed.external.uri)}" target="_blank" rel="noopener noreferrer" class="mt-2 block rounded border border-zinc-700 overflow-hidden hover:border-zinc-500 transition">
+          embedHtml += `<a href="${escapeHtml(embed.external.uri)}" target="_blank" rel="noopener noreferrer" class="mt-2 block rounded border border-theme-input-border overflow-hidden hover:border-theme-card-hover transition">
             ${embed.external.thumb ? `<img src="${escapeHtml(embed.external.thumb)}" alt="" class="w-full aspect-[2/1] object-cover" loading="lazy" onerror="this.style.display='none'" />` : ''}
             <div class="p-3">
-              <div class="text-sm font-medium text-zinc-200 line-clamp-1">${escapeHtml(embed.external.title || '')}</div>
-              ${embed.external.description ? `<div class="text-xs text-zinc-500 mt-1 line-clamp-2">${escapeHtml(embed.external.description)}</div>` : ''}
-              <div class="text-xs text-zinc-600 mt-1">${escapeHtml(new URL(embed.external.uri).hostname)}</div>
+              <div class="text-sm font-medium text-theme-text line-clamp-1">${escapeHtml(embed.external.title || '')}</div>
+              ${embed.external.description ? `<div class="text-xs text-theme-faint mt-1 line-clamp-2">${escapeHtml(embed.external.description)}</div>` : ''}
+              <div class="text-xs text-theme-faint mt-1">${escapeHtml(new URL(embed.external.uri).hostname)}</div>
             </div>
           </a>`;
         }
@@ -324,12 +324,12 @@ import { siteConfig } from '../lib/config';
 
       // Quote post
       if (embed.quote?.text) {
-        embedHtml += `<div class="mt-2 rounded border border-zinc-700 p-3 bg-zinc-800/50">
-          <div class="text-xs text-zinc-400 mb-1">
-            <span class="font-medium text-zinc-300">${escapeHtml(embed.quote.author)}</span>
-            <span class="text-zinc-500 ml-1">@${escapeHtml(embed.quote.handle)}</span>
+        embedHtml += `<div class="mt-2 rounded border border-theme-input-border p-3 bg-theme-surface/50">
+          <div class="text-xs text-theme-muted mb-1">
+            <span class="font-medium text-theme-text">${escapeHtml(embed.quote.author)}</span>
+            <span class="text-theme-faint ml-1">@${escapeHtml(embed.quote.handle)}</span>
           </div>
-          <p class="text-sm text-zinc-300 line-clamp-4">${escapeHtml(embed.quote.text)}</p>
+          <p class="text-sm text-theme-text line-clamp-4">${escapeHtml(embed.quote.text)}</p>
         </div>`;
       }
 
@@ -339,15 +339,15 @@ import { siteConfig } from '../lib/config';
         : (!embed.images?.length ? post.imageUrl : null);
 
       return `
-        <article class="rounded-lg border border-zinc-800 bg-zinc-900 overflow-hidden">
+        <article class="rounded-lg border border-theme-card-border bg-theme-card overflow-hidden">
           ${primaryImage ? `<div class="bg-black flex justify-center"><img src="${escapeHtml(primaryImage)}" alt="${escapeHtml(embed.images?.[0]?.alt || post.title)}" style="width:100%;max-height:28rem;object-fit:contain" loading="lazy" onerror="this.parentElement.style.display='none'" /></div>` : ''}
           <div class="p-4">
             <div class="mb-3">${authorHtml}</div>
             <h3 class="font-semibold"><a href="${escapeHtml(post.link)}" target="_blank" class="hover:underline">${formatText(post.title)}</a></h3>
-            ${post.description && post.description !== post.title ? `<p class="mt-1 text-sm text-zinc-400">${formatText(post.description)}</p>` : ''}
+            ${post.description && post.description !== post.title ? `<p class="mt-1 text-sm text-theme-muted">${formatText(post.description)}</p>` : ''}
             ${embedHtml}
-            ${post.exifData ? `<div class="mt-2 text-xs text-zinc-500">${formatExif(post.exifData)}</div>` : ''}
-            <div class="mt-3 flex items-center gap-4 text-sm text-zinc-400">
+            ${post.exifData ? `<div class="mt-2 text-xs text-theme-faint">${formatExif(post.exifData)}</div>` : ''}
+            <div class="mt-3 flex items-center gap-4 text-sm text-theme-muted">
               ${actionsHtml}
             </div>
           </div>
@@ -358,7 +358,7 @@ import { siteConfig } from '../lib/config';
     if (append) {
       feedContainer.insertAdjacentHTML('beforeend', html);
     } else {
-      feedContainer.innerHTML = html || '<div class="text-center py-8 text-zinc-500">No posts yet</div>';
+      feedContainer.innerHTML = html || '<div class="text-center py-8 text-theme-faint">No posts yet</div>';
     }
 
     hasMore = !!data.hasMore;
@@ -400,11 +400,11 @@ import { siteConfig } from '../lib/config';
         if (ytId) {
           embedHtml += `<div class="mt-2 rounded overflow-hidden bg-black aspect-video"><iframe src="https://www.youtube.com/embed/${ytId}" class="w-full h-full" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`;
         } else {
-          embedHtml += `<a href="${escapeHtml(embed.external.uri)}" target="_blank" rel="noopener noreferrer" class="mt-2 block rounded border border-zinc-700 overflow-hidden hover:border-zinc-500 transition">
+          embedHtml += `<a href="${escapeHtml(embed.external.uri)}" target="_blank" rel="noopener noreferrer" class="mt-2 block rounded border border-theme-input-border overflow-hidden hover:border-theme-card-hover transition">
             ${embed.external.thumb ? `<img src="${escapeHtml(embed.external.thumb)}" alt="" class="w-full aspect-[2/1] object-cover" loading="lazy" onerror="this.style.display='none'" />` : ''}
             <div class="p-3">
-              <div class="text-sm font-medium text-zinc-200 line-clamp-1">${escapeHtml(embed.external.title || '')}</div>
-              ${embed.external.description ? `<div class="text-xs text-zinc-500 mt-1 line-clamp-2">${escapeHtml(embed.external.description)}</div>` : ''}
+              <div class="text-sm font-medium text-theme-text line-clamp-1">${escapeHtml(embed.external.title || '')}</div>
+              ${embed.external.description ? `<div class="text-xs text-theme-faint mt-1 line-clamp-2">${escapeHtml(embed.external.description)}</div>` : ''}
             </div>
           </a>`;
         }
@@ -412,39 +412,39 @@ import { siteConfig } from '../lib/config';
 
       // Quote
       if (embed.quote?.text) {
-        embedHtml += `<div class="mt-2 rounded border border-zinc-700 p-3 bg-zinc-800/50">
-          <div class="text-xs text-zinc-400 mb-1">
-            <span class="font-medium text-zinc-300">${escapeHtml(embed.quote.author)}</span>
-            <span class="text-zinc-500 ml-1">@${escapeHtml(embed.quote.handle)}</span>
+        embedHtml += `<div class="mt-2 rounded border border-theme-input-border p-3 bg-theme-surface/50">
+          <div class="text-xs text-theme-muted mb-1">
+            <span class="font-medium text-theme-text">${escapeHtml(embed.quote.author)}</span>
+            <span class="text-theme-faint ml-1">@${escapeHtml(embed.quote.handle)}</span>
           </div>
-          <p class="text-sm text-zinc-300 line-clamp-4">${escapeHtml(embed.quote.text)}</p>
+          <p class="text-sm text-theme-text line-clamp-4">${escapeHtml(embed.quote.text)}</p>
         </div>`;
       }
 
       const repostLine = post.repostBy
-        ? `<div class="text-xs text-zinc-500 mb-2">🔁 Reposted by ${escapeHtml(post.repostBy.displayName)}</div>`
+        ? `<div class="text-xs text-theme-faint mb-2">🔁 Reposted by ${escapeHtml(post.repostBy.displayName)}</div>`
         : '';
 
       return `
-        <article class="rounded-lg border border-zinc-800 bg-zinc-900 overflow-hidden">
+        <article class="rounded-lg border border-theme-card-border bg-theme-card overflow-hidden">
           <div class="p-4">
             ${repostLine}
             <div class="flex items-center gap-3 mb-3">
-              ${post.author.avatar ? `<img src="${escapeHtml(post.author.avatar)}" class="h-10 w-10 rounded-full" />` : '<div class="h-10 w-10 rounded-full bg-zinc-700"></div>'}
+              ${post.author.avatar ? `<img src="${escapeHtml(post.author.avatar)}" class="h-10 w-10 rounded-full" />` : '<div class="h-10 w-10 rounded-full bg-theme-surface-hover"></div>'}
               <div>
                 <a href="https://bsky.app/profile/${escapeHtml(post.author.handle)}" target="_blank" class="font-medium text-sm hover:underline">${escapeHtml(post.author.displayName)}</a>
-                <div class="text-xs text-zinc-500">@${escapeHtml(post.author.handle)}</div>
+                <div class="text-xs text-theme-faint">@${escapeHtml(post.author.handle)}</div>
               </div>
-              <time class="text-xs text-zinc-500 ml-auto">${new Date(post.pubDate).toLocaleDateString()}</time>
+              <time class="text-xs text-theme-faint ml-auto">${new Date(post.pubDate).toLocaleDateString()}</time>
             </div>
             ${post.text ? `<p class="text-sm whitespace-pre-wrap mb-2">${formatText(post.text)}</p>` : ''}
             ${embedHtml}
-            <div class="mt-3 flex items-center gap-4 text-xs text-zinc-500">
+            <div class="mt-3 flex items-center gap-4 text-xs text-theme-faint">
               <span>♡ ${post.likeCount}</span>
               <span>🔁 ${post.repostCount}</span>
               <span>💬 ${post.replyCount}</span>
-              <button class="share-btn hover:text-green-400 transition ml-auto" data-url="${escapeHtml(post.link)}" data-title="${escapeHtml(post.text?.slice(0, 100) || '')}">↗ Share</button>
-              <a href="${escapeHtml(post.link)}" target="_blank" rel="noopener noreferrer" class="hover:text-white">↗ Open</a>
+              <button class="share-btn hover:text-green-500 transition ml-auto" data-url="${escapeHtml(post.link)}" data-title="${escapeHtml(post.text?.slice(0, 100) || '')}">↗ Share</button>
+              <a href="${escapeHtml(post.link)}" target="_blank" rel="noopener noreferrer" class="hover:text-theme-text">↗ Open</a>
             </div>
           </div>
         </article>
@@ -454,7 +454,7 @@ import { siteConfig } from '../lib/config';
     if (append) {
       feedContainer.insertAdjacentHTML('beforeend', html);
     } else {
-      feedContainer.innerHTML = html || '<div class="text-center py-8 text-zinc-500">Connect your Bluesky account in Settings to see your feed</div>';
+      feedContainer.innerHTML = html || '<div class="text-center py-8 text-theme-faint">Connect your Bluesky account in Settings to see your feed</div>';
     }
 
     hasMore = !!bskyCursor;
@@ -466,25 +466,25 @@ import { siteConfig } from '../lib/config';
 
   function renderPeople(data, append) {
     const html = (data.users || []).map(user => `
-      <div class="flex items-center gap-4 rounded-lg border border-zinc-800 bg-zinc-900 p-4">
-        ${user.avatarUrl ? `<img src="${escapeHtml(user.avatarUrl)}" class="h-12 w-12 rounded-full" />` : '<div class="h-12 w-12 rounded-full bg-zinc-700"></div>'}
+      <div class="flex items-center gap-4 rounded-lg border border-theme-card-border bg-theme-card p-4">
+        ${user.avatarUrl ? `<img src="${escapeHtml(user.avatarUrl)}" class="h-12 w-12 rounded-full" />` : '<div class="h-12 w-12 rounded-full bg-theme-surface-hover"></div>'}
         <div class="flex-1 min-w-0">
           <a href="${escapeHtml(user.siteUrl || '#')}" target="_blank" class="font-medium hover:underline">${escapeHtml(user.displayName || user.username)}</a>
-          <p class="text-sm text-zinc-400">@${escapeHtml(user.username)}</p>
-          ${user.bio ? `<p class="text-sm text-zinc-500 mt-1 truncate">${escapeHtml(user.bio)}</p>` : ''}
+          <p class="text-sm text-theme-muted">@${escapeHtml(user.username)}</p>
+          ${user.bio ? `<p class="text-sm text-theme-faint mt-1 truncate">${escapeHtml(user.bio)}</p>` : ''}
         </div>
-        <div class="text-right text-xs text-zinc-500">
+        <div class="text-right text-xs text-theme-faint">
           <div>${user._count?.posts || 0} posts</div>
           <div>${user._count?.followers || 0} followers</div>
         </div>
-        ${token ? `<button class="follow-btn rounded bg-zinc-700 px-3 py-1 text-xs hover:bg-zinc-600 transition" data-user-id="${user.id}">Follow</button>` : ''}
+        ${token ? `<button class="follow-btn rounded bg-theme-surface-hover px-3 py-1 text-xs hover:bg-theme-card-hover transition" data-user-id="${user.id}">Follow</button>` : ''}
       </div>
     `).join('');
 
     if (append) {
       feedContainer.insertAdjacentHTML('beforeend', html);
     } else {
-      feedContainer.innerHTML = html || '<div class="text-center py-8 text-zinc-500">No users yet</div>';
+      feedContainer.innerHTML = html || '<div class="text-center py-8 text-theme-faint">No users yet</div>';
     }
 
     hasMore = !!data.hasMore;
@@ -559,10 +559,10 @@ import { siteConfig } from '../lib/config';
   shareOverlay.id = 'share-modal-overlay';
   shareOverlay.style.cssText = 'display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:50;justify-content:center;align-items:center';
   shareOverlay.innerHTML = `
-    <div id="share-modal" style="background:#18181b;border:1px solid #3f3f46;border-radius:.75rem;padding:1.5rem;width:20rem;max-width:90vw">
+    <div id="share-modal" style="background:var(--ps-card-bg);border:1px solid var(--ps-card-border);border-radius:.75rem;padding:1.5rem;width:20rem;max-width:90vw">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
         <h3 style="font-weight:600;font-size:1rem">Share</h3>
-        <button id="share-close" style="color:#a1a1aa;font-size:1.25rem;cursor:pointer;background:none;border:none">✕</button>
+        <button id="share-close" style="color:var(--ps-text-muted);font-size:1.25rem;cursor:pointer;background:none;border:none">✕</button>
       </div>
       <div id="share-links" style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem"></div>
     </div>`;
@@ -582,9 +582,9 @@ import { siteConfig } from '../lib/config';
       { label: '📧 Email', href: `mailto:?subject=${enc(title)}&body=${enc(url)}` },
     ];
     const linksHtml = links.map(l =>
-      `<a href="${l.href}" target="_blank" rel="noopener noreferrer" style="display:flex;align-items:center;gap:.5rem;padding:.5rem .75rem;border-radius:.5rem;background:#27272a;color:#e4e4e7;font-size:.875rem;text-decoration:none;transition:background .15s" onmouseover="this.style.background='#3f3f46'" onmouseout="this.style.background='#27272a'">${l.label}</a>`
+      `<a href="${l.href}" target="_blank" rel="noopener noreferrer" style="display:flex;align-items:center;gap:.5rem;padding:.5rem .75rem;border-radius:.5rem;background:var(--ps-input-bg);color:var(--ps-text);font-size:.875rem;text-decoration:none;transition:background .15s" onmouseover="this.style.background='var(--ps-surface-hover)'" onmouseout="this.style.background='var(--ps-input-bg)'">${l.label}</a>`
     ).join('');
-    const copyBtn = `<button id="share-copy" style="display:flex;align-items:center;gap:.5rem;padding:.5rem .75rem;border-radius:.5rem;background:#27272a;color:#e4e4e7;font-size:.875rem;border:none;cursor:pointer;transition:background .15s;grid-column:span 2" onmouseover="this.style.background='#3f3f46'" onmouseout="this.style.background='#27272a'">📋 Copy Link</button>`;
+    const copyBtn = `<button id="share-copy" style="display:flex;align-items:center;gap:.5rem;padding:.5rem .75rem;border-radius:.5rem;background:var(--ps-input-bg);color:var(--ps-text);font-size:.875rem;border:none;cursor:pointer;transition:background .15s;grid-column:span 2" onmouseover="this.style.background='var(--ps-surface-hover)'" onmouseout="this.style.background='var(--ps-input-bg)'">📋 Copy Link</button>`;
     document.getElementById('share-links').innerHTML = linksHtml + copyBtn;
     document.getElementById('share-copy').addEventListener('click', async () => {
       try {
@@ -734,15 +734,15 @@ import { siteConfig } from '../lib/config';
     feedContainer.innerHTML = `
       <div class="mb-6">
         <div class="flex items-center gap-2 mb-4">
-          <select id="squad-select" class="flex-1 rounded bg-zinc-800 border border-zinc-700 px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
+          <select id="squad-select" class="flex-1 rounded bg-theme-input-bg border border-theme-input-border px-3 py-2 text-sm focus:outline-none focus:border-theme-primary">
             <option value="">Select a squad...</option>
           </select>
-          <button id="toggle-create-squad" class="rounded bg-blue-600 px-3 py-2 text-sm font-medium hover:bg-blue-500 transition whitespace-nowrap">+ New</button>
+          <button id="toggle-create-squad" class="rounded bg-theme-primary px-3 py-2 text-sm font-medium hover:bg-theme-primary transition whitespace-nowrap">+ New</button>
         </div>
         <form id="create-squad-form" class="hidden flex gap-2 mb-4">
           <input type="text" id="squad-name-input" placeholder="Squad name (e.g. Photo Friends)" required
-            class="flex-1 rounded bg-zinc-800 border border-zinc-700 px-3 py-2 text-sm focus:outline-none focus:border-blue-500" />
-          <button type="submit" class="rounded bg-blue-600 px-4 py-2 text-sm font-medium hover:bg-blue-500 transition whitespace-nowrap">
+            class="flex-1 rounded bg-theme-input-bg border border-theme-input-border px-3 py-2 text-sm focus:outline-none focus:border-theme-primary" />
+          <button type="submit" class="rounded bg-theme-primary px-4 py-2 text-sm font-medium hover:bg-theme-primary transition whitespace-nowrap">
             Create
           </button>
         </form>
@@ -785,7 +785,7 @@ import { siteConfig } from '../lib/config';
     const container = document.getElementById('squads-list');
     if (!container) return;
     if (!id) {
-      container.innerHTML = '<div class="text-center py-8 text-zinc-500">Select a squad above or create a new one</div>';
+      container.innerHTML = '<div class="text-center py-8 text-theme-faint">Select a squad above or create a new one</div>';
       return;
     }
     const squad = allSquads.find(s => String(s.id) === String(id));
@@ -815,7 +815,7 @@ import { siteConfig } from '../lib/config';
         allSquads.map(s => `<option value="${s.id}">${escapeHtml(s.name)} (${s.members.length})</option>`).join('');
 
       if (!allSquads.length) {
-        container.innerHTML = '<div class="text-center py-8 text-zinc-500">No squads yet. Create one!</div>';
+        container.innerHTML = '<div class="text-center py-8 text-theme-faint">No squads yet. Create one!</div>';
         return;
       }
 
@@ -831,21 +831,21 @@ import { siteConfig } from '../lib/config';
   function renderSquad(squad) {
     const windowLabel = formatWindow(squad.activityWindow);
     return `
-    <div class="rounded-lg border border-zinc-800 bg-zinc-900 p-6" data-squad-id="${squad.id}">
+    <div class="rounded-lg border border-theme-card-border bg-theme-card p-6" data-squad-id="${squad.id}">
       <div class="flex items-center justify-between mb-4">
         <h2 class="text-lg font-semibold">${escapeHtml(squad.name)}</h2>
         <button class="delete-squad-btn text-xs text-red-400 hover:text-red-300 transition" data-squad-id="${squad.id}">Delete</button>
       </div>
 
       <div class="mb-4 flex items-center gap-3">
-        <label class="text-xs text-zinc-500 whitespace-nowrap">Activity window:</label>
+        <label class="text-xs text-theme-faint whitespace-nowrap">Activity window:</label>
         <input type="range" min="15" max="720" step="15" value="${squad.activityWindow}"
           class="flex-1 accent-blue-500 squad-window-slider" data-squad-id="${squad.id}" />
-        <span class="text-xs text-zinc-400 w-16 text-right squad-window-label" data-squad-id="${squad.id}">${windowLabel}</span>
+        <span class="text-xs text-theme-muted w-16 text-right squad-window-label" data-squad-id="${squad.id}">${windowLabel}</span>
       </div>
 
       <div class="squad-circle relative flex justify-center items-center my-6" style="min-height:16rem">
-        <div class="my-center-avatar absolute rounded-full border-2 border-blue-500 overflow-hidden bg-zinc-800 flex items-center justify-center" style="width:4rem;height:4rem;z-index:2">
+        <div class="my-center-avatar absolute rounded-full border-2 border-blue-500 overflow-hidden bg-theme-input-bg flex items-center justify-center" style="width:4rem;height:4rem;z-index:2">
           ${myAvatar
             ? `<img src="${escapeHtml(myAvatar)}" alt="You" class="w-full h-full object-cover" />`
             : `<span class="text-lg">👤</span>`
@@ -861,12 +861,12 @@ import { siteConfig } from '../lib/config';
           <div class="absolute squad-member-avatar" data-member-id="${m.id}" data-handle="${escapeHtml(m.handle)}"
             style="transform:translate(${x}px,${y}px);z-index:1">
             <div class="relative group cursor-pointer">
-              <div class="activity-dot absolute -top-1 -right-1 w-3 h-3 rounded-full border-2 border-zinc-900 bg-zinc-600 z-10" data-member-id="${m.id}"></div>
+              <div class="activity-dot absolute -top-1 -right-1 w-3 h-3 rounded-full border-2 border-theme-card bg-theme-surface-hover z-10" data-member-id="${m.id}"></div>
               ${m.avatarUrl
-                ? `<img src="${escapeHtml(m.avatarUrl)}" alt="${escapeHtml(m.displayName || m.handle)}" class="w-12 h-12 rounded-full border-2 border-zinc-700 hover:border-zinc-500 transition" />`
-                : `<div class="w-12 h-12 rounded-full border-2 border-zinc-700 bg-zinc-800 flex items-center justify-center text-zinc-400 text-xs">${escapeHtml((m.handle || '?')[0].toUpperCase())}</div>`
+                ? `<img src="${escapeHtml(m.avatarUrl)}" alt="${escapeHtml(m.displayName || m.handle)}" class="w-12 h-12 rounded-full border-2 border-theme-input-border hover:border-theme-card-hover transition" />`
+                : `<div class="w-12 h-12 rounded-full border-2 border-theme-input-border bg-theme-input-bg flex items-center justify-center text-theme-muted text-xs">${escapeHtml((m.handle || '?')[0].toUpperCase())}</div>`
               }
-              <div class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs text-zinc-500 whitespace-nowrap opacity-0 group-hover:opacity-100 transition pointer-events-none">
+              <div class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs text-theme-faint whitespace-nowrap opacity-0 group-hover:opacity-100 transition pointer-events-none">
                 ${escapeHtml(m.displayName || m.handle)}
               </div>
             </div>
@@ -875,25 +875,25 @@ import { siteConfig } from '../lib/config';
       </div>
 
       <div class="flex gap-2 mt-4">
-        <input type="text" placeholder="@handle.bsky.social" class="add-member-input flex-1 rounded bg-zinc-800 border border-zinc-700 px-3 py-1.5 text-sm focus:outline-none focus:border-blue-500" data-squad-id="${squad.id}" />
-        <button class="add-member-btn rounded bg-zinc-700 px-3 py-1.5 text-sm hover:bg-zinc-600 transition" data-squad-id="${squad.id}">Add</button>
+        <input type="text" placeholder="@handle.bsky.social" class="add-member-input flex-1 rounded bg-theme-input-bg border border-theme-input-border px-3 py-1.5 text-sm focus:outline-none focus:border-theme-primary" data-squad-id="${squad.id}" />
+        <button class="add-member-btn rounded bg-theme-surface-hover px-3 py-1.5 text-sm hover:bg-theme-card-hover transition" data-squad-id="${squad.id}">Add</button>
       </div>
 
       <div class="mt-3 flex flex-wrap gap-1">
         ${squad.members.map(m => `
-          <span class="inline-flex items-center gap-1 rounded bg-zinc-800 px-2 py-0.5 text-xs text-zinc-400">
+          <span class="inline-flex items-center gap-1 rounded bg-theme-input-bg px-2 py-0.5 text-xs text-theme-muted">
             @${escapeHtml(m.handle)}
-            <button class="remove-member-btn text-zinc-600 hover:text-red-400 transition" data-squad-id="${squad.id}" data-member-id="${m.id}">✕</button>
+            <button class="remove-member-btn text-theme-faint hover:text-red-400 transition" data-squad-id="${squad.id}" data-member-id="${m.id}">✕</button>
           </span>
         `).join('')}
       </div>
 
       ${squad.members.length ? `
       <div class="flex gap-2 mt-4">
-        <button class="check-activity-btn flex-1 rounded bg-zinc-800 py-2 text-sm hover:bg-zinc-700 transition" data-squad-id="${squad.id}">
+        <button class="check-activity-btn flex-1 rounded bg-theme-input-bg py-2 text-sm hover:bg-theme-surface-hover transition" data-squad-id="${squad.id}">
           Check Activity
         </button>
-        <button class="view-squad-feed-btn flex-1 rounded bg-zinc-800 py-2 text-sm hover:bg-zinc-700 transition" data-squad-id="${squad.id}">
+        <button class="view-squad-feed-btn flex-1 rounded bg-theme-input-bg py-2 text-sm hover:bg-theme-surface-hover transition" data-squad-id="${squad.id}">
           View Squad Feed
         </button>
       </div>
@@ -908,7 +908,7 @@ import { siteConfig } from '../lib/config';
       const dot = document.querySelector(`.activity-dot[data-member-id="${m.id}"]`);
       if (!dot) return;
       if (m.lastPostAt && new Date(m.lastPostAt) >= cutoff) {
-        dot.classList.remove('bg-zinc-600');
+        dot.classList.remove('bg-theme-surface-hover');
         dot.classList.add('bg-green-500');
         dot.title = `Last posted ${timeAgo(m.lastPostAt)} (cached)`;
       } else {
@@ -939,12 +939,12 @@ import { siteConfig } from '../lib/config';
         const dot = document.querySelector(`.activity-dot[data-member-id="${m.id}"]`);
         if (!dot) return;
         if (m.isActive) {
-          dot.classList.remove('bg-zinc-600');
+          dot.classList.remove('bg-theme-surface-hover');
           dot.classList.add('bg-green-500');
           dot.title = `Last posted ${timeAgo(m.lastPostAt)}`;
         } else {
           dot.classList.remove('bg-green-500');
-          dot.classList.add('bg-zinc-600');
+          dot.classList.add('bg-theme-surface-hover');
           dot.title = m.lastPostAt ? `Last posted ${timeAgo(m.lastPostAt)}` : 'No recent posts';
         }
       });
@@ -1031,7 +1031,7 @@ import { siteConfig } from '../lib/config';
         btn.textContent = 'Loading...';
         try {
           const posts = await fetchSquadFeedDirect(squad.members);
-          feedEl.innerHTML = posts.map(post => renderSquadCard(post)).join('') || '<div class="text-center py-4 text-zinc-500">No posts</div>';
+          feedEl.innerHTML = posts.map(post => renderSquadCard(post)).join('') || '<div class="text-center py-4 text-theme-faint">No posts</div>';
           feedEl.classList.remove('hidden');
           btn.textContent = 'Hide Squad Feed';
           initHlsVideos();
@@ -1053,7 +1053,7 @@ import { siteConfig } from '../lib/config';
         feedBtn.textContent = `Loading @${handle}...`;
         try {
           const data = await fetchAuthorFeedDirect(handle, 10);
-          feedEl.innerHTML = data.map(post => renderSquadCard(post)).join('') || '<div class="text-center py-4 text-zinc-500">No posts</div>';
+          feedEl.innerHTML = data.map(post => renderSquadCard(post)).join('') || '<div class="text-center py-4 text-theme-faint">No posts</div>';
           feedEl.classList.remove('hidden');
           feedBtn.textContent = 'Hide Squad Feed';
           initHlsVideos();
@@ -1087,35 +1087,35 @@ import { siteConfig } from '../lib/config';
       if (ytId) {
         embedHtml += `<div class="mt-2 rounded overflow-hidden bg-black aspect-video"><iframe src="https://www.youtube.com/embed/${ytId}" class="w-full h-full" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`;
       } else {
-        embedHtml += `<a href="${escapeHtml(embed.external.uri)}" target="_blank" rel="noopener noreferrer" class="mt-2 block rounded border border-zinc-700 overflow-hidden hover:border-zinc-500 transition">
+        embedHtml += `<a href="${escapeHtml(embed.external.uri)}" target="_blank" rel="noopener noreferrer" class="mt-2 block rounded border border-theme-input-border overflow-hidden hover:border-theme-card-hover transition">
           ${embed.external.thumb ? `<img src="${escapeHtml(embed.external.thumb)}" alt="" class="w-full aspect-[2/1] object-cover" loading="lazy" onerror="this.style.display='none'" />` : ''}
-          <div class="p-3"><div class="text-sm font-medium text-zinc-200 line-clamp-1">${escapeHtml(embed.external.title || '')}</div></div>
+          <div class="p-3"><div class="text-sm font-medium text-theme-text line-clamp-1">${escapeHtml(embed.external.title || '')}</div></div>
         </a>`;
       }
     }
     if (embed.quote?.text) {
-      embedHtml += `<div class="mt-2 rounded border border-zinc-700 p-3 bg-zinc-800/50">
-        <div class="text-xs text-zinc-400 mb-1"><span class="font-medium text-zinc-300">${escapeHtml(embed.quote.author)}</span> <span class="text-zinc-500">@${escapeHtml(embed.quote.handle)}</span></div>
-        <p class="text-sm text-zinc-300 line-clamp-3">${escapeHtml(embed.quote.text)}</p>
+      embedHtml += `<div class="mt-2 rounded border border-theme-input-border p-3 bg-theme-surface/50">
+        <div class="text-xs text-theme-muted mb-1"><span class="font-medium text-theme-text">${escapeHtml(embed.quote.author)}</span> <span class="text-theme-faint">@${escapeHtml(embed.quote.handle)}</span></div>
+        <p class="text-sm text-theme-text line-clamp-3">${escapeHtml(embed.quote.text)}</p>
       </div>`;
     }
     return `
-    <article class="rounded-lg border border-zinc-800 bg-zinc-900/50 p-4">
+    <article class="rounded-lg border border-theme-card-border bg-theme-card/50 p-4">
       <div class="flex items-center gap-2 mb-2">
         ${post.author.avatar ? `<img src="${escapeHtml(post.author.avatar)}" class="h-8 w-8 rounded-full" />` : ''}
         <div>
           <span class="text-sm font-medium">${escapeHtml(post.author.displayName)}</span>
-          <span class="text-xs text-zinc-500 ml-1">@${escapeHtml(post.author.handle)}</span>
+          <span class="text-xs text-theme-faint ml-1">@${escapeHtml(post.author.handle)}</span>
         </div>
-        <time class="text-xs text-zinc-500 ml-auto">${timeAgo(post.pubDate)}</time>
+        <time class="text-xs text-theme-faint ml-auto">${timeAgo(post.pubDate)}</time>
       </div>
       ${post.text ? `<p class="text-sm whitespace-pre-wrap">${escapeHtml(post.text)}</p>` : ''}
       ${embedHtml}
-      <div class="mt-2 flex items-center gap-3 text-xs text-zinc-500">
+      <div class="mt-2 flex items-center gap-3 text-xs text-theme-faint">
         <span>♡ ${post.likeCount}</span>
         <span>🔁 ${post.repostCount}</span>
         <span>💬 ${post.replyCount}</span>
-        <a href="${escapeHtml(post.link)}" target="_blank" class="hover:text-white ml-auto">↗ Open</a>
+        <a href="${escapeHtml(post.link)}" target="_blank" class="hover:text-theme-text ml-auto">↗ Open</a>
       </div>
     </article>`;
   }
@@ -1149,7 +1149,7 @@ import { siteConfig } from '../lib/config';
 
 <style>
   .active-tab {
-    background-color: rgb(82 82 91); /* zinc-600 */
+    background-color: var(--ps-surface-hover);
   }
   @keyframes spin { to { transform: rotate(360deg); } }
   .animate-spin { animation: spin .6s linear infinite; }

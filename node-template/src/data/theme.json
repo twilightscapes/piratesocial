@@ -1,0 +1,53 @@
+{
+  "fonts": {
+    "heading": "system-ui, -apple-system, sans-serif",
+    "body": "system-ui, -apple-system, sans-serif",
+    "mono": "ui-monospace, monospace",
+    "headingSize": "1",
+    "bodySize": "1"
+  },
+  "light": {
+    "background": "rgba(255, 255, 255, 1)",
+    "surface": "rgba(255, 255, 255, 1)",
+    "surfaceBorder": "rgba(228, 228, 231, 1)",
+    "surfaceHover": "rgba(244, 244, 245, 1)",
+    "text": "rgba(24, 24, 27, 1)",
+    "textMuted": "rgba(82, 82, 91, 1)",
+    "textFaint": "rgba(113, 113, 122, 1)",
+    "primary": "rgba(59, 130, 246, 1)",
+    "primaryHover": "rgba(37, 99, 235, 1)",
+    "accent": "rgba(139, 92, 246, 1)",
+    "border": "rgba(228, 228, 231, 1)",
+    "inputBg": "rgba(244, 244, 245, 1)",
+    "inputBorder": "rgba(212, 212, 216, 1)",
+    "tag": "rgba(244, 244, 245, 1)",
+    "tagText": "rgba(82, 82, 91, 1)",
+    "cardBg": "rgba(255, 255, 255, 1)",
+    "cardBorder": "rgba(228, 228, 231, 1)",
+    "cardHover": "rgba(212, 212, 216, 1)",
+    "headerBg": "rgba(255, 255, 255, 1)",
+    "footerBg": "rgba(255, 255, 255, 1)"
+  },
+  "dark": {
+    "background": "rgba(9, 9, 11, 1)",
+    "surface": "rgba(24, 24, 27, 1)",
+    "surfaceBorder": "rgba(39, 39, 42, 1)",
+    "surfaceHover": "rgba(39, 39, 42, 1)",
+    "text": "rgba(244, 244, 245, 1)",
+    "textMuted": "rgba(161, 161, 170, 1)",
+    "textFaint": "rgba(113, 113, 122, 1)",
+    "primary": "rgba(59, 130, 246, 1)",
+    "primaryHover": "rgba(96, 165, 250, 1)",
+    "accent": "rgba(139, 92, 246, 1)",
+    "border": "rgba(39, 39, 42, 1)",
+    "inputBg": "rgba(39, 39, 42, 1)",
+    "inputBorder": "rgba(63, 63, 70, 1)",
+    "tag": "rgba(39, 39, 42, 1)",
+    "tagText": "rgba(161, 161, 170, 1)",
+    "cardBg": "rgba(24, 24, 27, 1)",
+    "cardBorder": "rgba(39, 39, 42, 1)",
+    "cardHover": "rgba(63, 63, 70, 1)",
+    "headerBg": "rgba(9, 9, 11, 1)",
+    "footerBg": "rgba(9, 9, 11, 1)"
+  }
+}

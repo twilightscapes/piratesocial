@@ -32,7 +32,7 @@ const photoData = photos.map(p => ({
 }));
 ---
 
-<div class="slideshow relative aspect-[16/9] overflow-hidden rounded-lg bg-zinc-900" data-transition={transition} data-interval={interval} data-autoplay={autoplay}>
+<div class="slideshow relative aspect-[16/9] overflow-hidden rounded-lg bg-theme-surface" data-transition={transition} data-interval={interval} data-autoplay={autoplay}>
   <!-- Slides -->
   {photoData.map((photo, i) => (
     <div
@@ -48,7 +48,7 @@ const photoData = photos.map(p => ({
       {showCaptions && (photo.caption || photo.credit) && (
         <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-4">
           {photo.caption && <p class="text-sm text-white">{photo.caption}</p>}
-          {photo.credit && <p class="text-xs text-zinc-400 mt-1">📷 {photo.credit}</p>}
+          {photo.credit && <p class="text-xs text-theme-muted mt-1">📷 {photo.credit}</p>}
         </div>
       )}
     </div>

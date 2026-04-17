@@ -8,8 +8,8 @@ interface Props {
 const { postSlug } = Astro.props;
 ---
 
-<div class="mt-8 border-t border-zinc-800 pt-6" id={`social-${postSlug}`}>
-  <div class="flex items-center gap-4 text-sm text-zinc-400">
+<div class="mt-8 border-t border-theme-border pt-6" id={`social-${postSlug}`}>
+  <div class="flex items-center gap-4 text-sm text-theme-muted">
     <button class="like-action hover:text-red-400 transition cursor-pointer" data-slug={postSlug}>
       ♡ <span class="like-count">0</span>
     </button>
@@ -25,7 +25,7 @@ const { postSlug } = Astro.props;
   </div>
 
   <!-- Bluesky stats -->
-  <div class="bsky-stats hidden mt-2 text-xs text-zinc-500" data-slug={postSlug}>
+  <div class="bsky-stats hidden mt-2 text-xs text-theme-faint" data-slug={postSlug}>
     <span class="bsky-likes"></span>
     <span class="bsky-reposts ml-2"></span>
   </div>
@@ -36,11 +36,11 @@ const { postSlug } = Astro.props;
     <div class="flex gap-2">
       <input
         type="text"
-        class="comment-input flex-1 rounded bg-zinc-800 border border-zinc-700 px-3 py-2 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-500"
+        class="comment-input flex-1 rounded bg-theme-input-bg border border-theme-input-border px-3 py-2 text-sm text-theme-text placeholder-theme-faint focus:outline-none focus:border-theme-primary"
         placeholder="Write a comment..."
         maxlength="2000"
       />
-      <button class="comment-submit rounded bg-zinc-700 px-4 py-2 text-sm hover:bg-zinc-600 transition cursor-pointer">
+      <button class="comment-submit rounded bg-theme-surface-hover px-4 py-2 text-sm hover:bg-theme-card-hover transition cursor-pointer">
         Post
       </button>
     </div>
@@ -126,7 +126,7 @@ const { postSlug } = Astro.props;
       list.innerHTML = '';
 
       if (data.comments.length === 0) {
-        list.innerHTML = '<p class="text-sm text-zinc-500 italic">No comments yet</p>';
+        list.innerHTML = '<p class="text-sm text-theme-faint italic">No comments yet</p>';
         return;
       }
 
@@ -138,7 +138,7 @@ const { postSlug } = Astro.props;
         const sourceIcon = c.source === 'bluesky' ? '🦋' : '🏴‍☠️';
         const avatar = c.author.avatar
           ? `<img src="${c.author.avatar}" alt="" class="w-6 h-6 rounded-full flex-shrink-0" />`
-          : `<div class="w-6 h-6 rounded-full bg-zinc-700 flex-shrink-0"></div>`;
+          : `<div class="w-6 h-6 rounded-full bg-theme-surface-hover flex-shrink-0"></div>`;
 
         const time = new Date(c.createdAt).toLocaleDateString('en-US', {
           month: 'short', day: 'numeric',
@@ -148,11 +148,11 @@ const { postSlug } = Astro.props;
           ${avatar}
           <div class="flex-1 min-w-0">
             <div class="flex items-center gap-2">
-              <span class="font-medium text-zinc-300">${escapeHtml(c.author.displayName || c.author.handle)}</span>
-              <span class="text-zinc-600 text-xs">${sourceIcon}</span>
-              <span class="text-zinc-600 text-xs">${time}</span>
+              <span class="font-medium text-theme-text">${escapeHtml(c.author.displayName || c.author.handle)}</span>
+              <span class="text-theme-faint text-xs">${sourceIcon}</span>
+              <span class="text-theme-faint text-xs">${time}</span>
             </div>
-            <p class="text-zinc-400 mt-0.5 break-words">${escapeHtml(c.text)}</p>
+            <p class="text-theme-muted mt-0.5 break-words">${escapeHtml(c.text)}</p>
           </div>
         `;
         list.appendChild(div);
@@ -280,10 +280,10 @@ const { postSlug } = Astro.props;
     shareOverlay.id = 'share-modal-overlay';
     shareOverlay.style.cssText = 'display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:50;justify-content:center;align-items:center';
     shareOverlay.innerHTML = `
-      <div id="share-modal" style="background:#18181b;border:1px solid #3f3f46;border-radius:.75rem;padding:1.5rem;width:20rem;max-width:90vw">
+      <div id="share-modal" style="background:var(--ps-card-bg);border:1px solid var(--ps-card-border);border-radius:.75rem;padding:1.5rem;width:20rem;max-width:90vw">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
           <h3 style="font-weight:600;font-size:1rem">Share</h3>
-          <button id="share-close" style="color:#a1a1aa;font-size:1.25rem;cursor:pointer;background:none;border:none">✕</button>
+          <button id="share-close" style="color:var(--ps-text-muted);font-size:1.25rem;cursor:pointer;background:none;border:none">✕</button>
         </div>
         <div id="share-links" style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem"></div>
       </div>`;
@@ -304,9 +304,9 @@ const { postSlug } = Astro.props;
       { label: '📧 Email', href: `mailto:?subject=${enc(title)}&body=${enc(url)}` },
     ];
     const linksHtml = links.map(l =>
-      `<a href="${l.href}" target="_blank" rel="noopener noreferrer" style="display:flex;align-items:center;gap:.5rem;padding:.5rem .75rem;border-radius:.5rem;background:#27272a;color:#e4e4e7;font-size:.875rem;text-decoration:none;transition:background .15s" onmouseover="this.style.background='#3f3f46'" onmouseout="this.style.background='#27272a'">${l.label}</a>`
+      `<a href="${l.href}" target="_blank" rel="noopener noreferrer" style="display:flex;align-items:center;gap:.5rem;padding:.5rem .75rem;border-radius:.5rem;background:var(--ps-input-bg);color:var(--ps-text);font-size:.875rem;text-decoration:none;transition:background .15s" onmouseover="this.style.background='var(--ps-surface-hover)'" onmouseout="this.style.background='var(--ps-input-bg)'">${l.label}</a>`
     ).join('');
-    const copyBtn = `<button id="share-copy" style="display:flex;align-items:center;gap:.5rem;padding:.5rem .75rem;border-radius:.5rem;background:#27272a;color:#e4e4e7;font-size:.875rem;border:none;cursor:pointer;transition:background .15s;grid-column:span 2" onmouseover="this.style.background='#3f3f46'" onmouseout="this.style.background='#27272a'">📋 Copy Link</button>`;
+    const copyBtn = `<button id="share-copy" style="display:flex;align-items:center;gap:.5rem;padding:.5rem .75rem;border-radius:.5rem;background:var(--ps-input-bg);color:var(--ps-text);font-size:.875rem;border:none;cursor:pointer;transition:background .15s;grid-column:span 2" onmouseover="this.style.background='var(--ps-surface-hover)'" onmouseout="this.style.background='var(--ps-input-bg)'">📋 Copy Link</button>`;
     document.getElementById('share-links').innerHTML = linksHtml + copyBtn;
     document.getElementById('share-copy').addEventListener('click', async () => {
       try {

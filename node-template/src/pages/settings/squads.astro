@@ -8,13 +8,13 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 <BaseLayout title="Squads">
   <div class="mx-auto max-w-2xl">
     <h1 class="text-2xl font-bold mb-2">Squads</h1>
-    <p class="text-zinc-400 text-sm mb-8">
+    <p class="text-theme-muted text-sm mb-8">
       Create groups of Bluesky users. See who's active at a glance and browse their posts.
     </p>
 
-    <div id="auth-required" class="hidden text-center py-12 text-zinc-500">
+    <div id="auth-required" class="hidden text-center py-12 text-theme-faint">
       <p>Sign in and connect Bluesky to use Squads</p>
-      <a href={`${base}/social/`} class="mt-4 inline-block rounded bg-white text-black px-4 py-2 text-sm font-medium hover:bg-zinc-200 transition">
+      <a href={`${base}/social/`} class="mt-4 inline-block rounded bg-white text-black px-4 py-2 text-sm font-medium hover:bg-theme-surface-hover transition">
         Sign in with GitHub
       </a>
     </div>
@@ -23,7 +23,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       <!-- Create squad -->
       <form id="create-squad-form" class="flex gap-2 mb-8">
         <input type="text" id="squad-name-input" placeholder="Squad name (e.g. Photo Friends)" required
-          class="flex-1 rounded bg-zinc-800 border border-zinc-700 px-3 py-2 text-sm focus:outline-none focus:border-blue-500" />
+          class="flex-1 rounded bg-theme-surface border border-theme-border px-3 py-2 text-sm focus:outline-none focus:border-blue-500" />
         <button type="submit" class="rounded bg-blue-600 px-4 py-2 text-sm font-medium hover:bg-blue-500 transition whitespace-nowrap">
           Create Squad
         </button>
@@ -96,7 +96,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       const squads = await res.json();
 
       if (!squads.length) {
-        container.innerHTML = '<div class="text-center py-8 text-zinc-500">No squads yet. Create one above!</div>';
+        container.innerHTML = '<div class="text-center py-8 text-theme-faint">No squads yet. Create one above!</div>';
         return;
       }
 
@@ -115,7 +115,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   function renderSquad(squad) {
     const windowLabel = formatWindow(squad.activityWindow);
     return `
-    <div class="rounded-lg border border-zinc-800 bg-zinc-900 p-6" data-squad-id="${squad.id}">
+    <div class="rounded-lg border border-theme-card-border bg-theme-card p-6" data-squad-id="${squad.id}">
       <div class="flex items-center justify-between mb-4">
         <h2 class="text-lg font-semibold">${esc(squad.name)}</h2>
         <div class="flex items-center gap-2">
@@ -125,16 +125,16 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
       <!-- Activity window slider -->
       <div class="mb-4 flex items-center gap-3">
-        <label class="text-xs text-zinc-500 whitespace-nowrap">Activity window:</label>
+        <label class="text-xs text-theme-faint whitespace-nowrap">Activity window:</label>
         <input type="range" min="15" max="720" step="15" value="${squad.activityWindow}"
           class="flex-1 accent-blue-500 squad-window-slider" data-squad-id="${squad.id}" />
-        <span class="text-xs text-zinc-400 w-16 text-right squad-window-label" data-squad-id="${squad.id}">${windowLabel}</span>
+        <span class="text-xs text-theme-muted w-16 text-right squad-window-label" data-squad-id="${squad.id}">${windowLabel}</span>
       </div>
 
       <!-- Circle avatar layout -->
       <div class="squad-circle relative flex justify-center items-center my-6" style="min-height:16rem">
         <!-- Center: logged-in user avatar -->
-        <div class="absolute rounded-full border-2 border-blue-500 overflow-hidden bg-zinc-800 flex items-center justify-center" style="width:4rem;height:4rem;z-index:2">
+        <div class="absolute rounded-full border-2 border-blue-500 overflow-hidden bg-theme-surface flex items-center justify-center" style="width:4rem;height:4rem;z-index:2">
           ${myAvatar
             ? `<img src="${esc(myAvatar)}" alt="You" class="w-full h-full object-cover" />`
             : `<span class="text-lg">👤</span>`
@@ -151,12 +151,12 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
           <div class="absolute squad-member-avatar" data-member-id="${m.id}" data-handle="${esc(m.handle)}"
             style="transform:translate(${x}px,${y}px);z-index:1">
             <div class="relative group cursor-pointer">
-              <div class="activity-dot absolute -top-1 -right-1 w-3 h-3 rounded-full border-2 border-zinc-900 bg-zinc-600 z-10" data-member-id="${m.id}"></div>
+              <div class="activity-dot absolute -top-1 -right-1 w-3 h-3 rounded-full border-2 border-theme-card bg-theme-primary z-10" data-member-id="${m.id}"></div>
               ${m.avatarUrl
-                ? `<img src="${esc(m.avatarUrl)}" alt="${esc(m.displayName || m.handle)}" class="w-12 h-12 rounded-full border-2 border-zinc-700 hover:border-zinc-500 transition" />`
-                : `<div class="w-12 h-12 rounded-full border-2 border-zinc-700 bg-zinc-800 flex items-center justify-center text-zinc-400 text-xs">${esc((m.handle || '?')[0].toUpperCase())}</div>`
+                ? `<img src="${esc(m.avatarUrl)}" alt="${esc(m.displayName || m.handle)}" class="w-12 h-12 rounded-full border-2 border-theme-border hover:border-theme-border transition" />`
+                : `<div class="w-12 h-12 rounded-full border-2 border-theme-border bg-theme-surface flex items-center justify-center text-theme-muted text-xs">${esc((m.handle || '?')[0].toUpperCase())}</div>`
               }
-              <div class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs text-zinc-500 whitespace-nowrap opacity-0 group-hover:opacity-100 transition pointer-events-none">
+              <div class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs text-theme-faint whitespace-nowrap opacity-0 group-hover:opacity-100 transition pointer-events-none">
                 ${esc(m.displayName || m.handle)}
               </div>
             </div>
@@ -166,23 +166,23 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
       <!-- Add member -->
       <div class="flex gap-2 mt-4">
-        <input type="text" placeholder="@handle.bsky.social" class="add-member-input flex-1 rounded bg-zinc-800 border border-zinc-700 px-3 py-1.5 text-sm focus:outline-none focus:border-blue-500" data-squad-id="${squad.id}" />
-        <button class="add-member-btn rounded bg-zinc-700 px-3 py-1.5 text-sm hover:bg-zinc-600 transition" data-squad-id="${squad.id}">Add</button>
+        <input type="text" placeholder="@handle.bsky.social" class="add-member-input flex-1 rounded bg-theme-surface border border-theme-border px-3 py-1.5 text-sm focus:outline-none focus:border-blue-500" data-squad-id="${squad.id}" />
+        <button class="add-member-btn rounded bg-theme-surface-hover px-3 py-1.5 text-sm hover:bg-theme-primary transition" data-squad-id="${squad.id}">Add</button>
       </div>
 
       <!-- Member list (compact) -->
       <div class="mt-3 flex flex-wrap gap-1">
         ${squad.members.map(m => `
-          <span class="inline-flex items-center gap-1 rounded bg-zinc-800 px-2 py-0.5 text-xs text-zinc-400">
+          <span class="inline-flex items-center gap-1 rounded bg-theme-surface px-2 py-0.5 text-xs text-theme-muted">
             @${esc(m.handle)}
-            <button class="remove-member-btn text-zinc-600 hover:text-red-400 transition" data-squad-id="${squad.id}" data-member-id="${m.id}">✕</button>
+            <button class="remove-member-btn text-theme-faint hover:text-red-400 transition" data-squad-id="${squad.id}" data-member-id="${m.id}">✕</button>
           </span>
         `).join('')}
       </div>
 
       <!-- View feed button -->
       ${squad.members.length ? `
-      <button class="view-squad-feed-btn mt-4 w-full rounded bg-zinc-800 py-2 text-sm hover:bg-zinc-700 transition" data-squad-id="${squad.id}">
+      <button class="view-squad-feed-btn mt-4 w-full rounded bg-theme-surface py-2 text-sm hover:bg-theme-surface-hover transition" data-squad-id="${squad.id}">
         View Squad Feed
       </button>
       <div class="squad-feed hidden mt-4 space-y-4" data-squad-id="${squad.id}"></div>
@@ -203,12 +203,12 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
         const dot = document.querySelector(`.activity-dot[data-member-id="${m.id}"]`);
         if (dot) {
           if (m.isActive) {
-            dot.classList.remove('bg-zinc-600');
+            dot.classList.remove('bg-theme-primary');
             dot.classList.add('bg-green-500');
             dot.title = `Last posted ${timeAgo(m.lastPostAt)}`;
           } else {
             dot.classList.remove('bg-green-500');
-            dot.classList.add('bg-zinc-600');
+            dot.classList.add('bg-theme-primary');
             dot.title = m.lastPostAt ? `Last posted ${timeAgo(m.lastPostAt)}` : 'No recent posts';
           }
         }
@@ -296,7 +296,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
             headers: { Authorization: `Bearer ${token}` },
           });
           const data = await res.json();
-          feedEl.innerHTML = (data.posts || []).map(post => renderBskyCard(post)).join('') || '<div class="text-center py-4 text-zinc-500">No posts</div>';
+          feedEl.innerHTML = (data.posts || []).map(post => renderBskyCard(post)).join('') || '<div class="text-center py-4 text-theme-faint">No posts</div>';
           feedEl.classList.remove('hidden');
           btn.textContent = 'Hide Squad Feed';
         } catch {
@@ -322,7 +322,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
             headers: { Authorization: `Bearer ${token}` },
           });
           const data = await res.json();
-          feedEl.innerHTML = (data.posts || []).map(post => renderBskyCard(post)).join('') || '<div class="text-center py-4 text-zinc-500">No posts</div>';
+          feedEl.innerHTML = (data.posts || []).map(post => renderBskyCard(post)).join('') || '<div class="text-center py-4 text-theme-faint">No posts</div>';
           feedEl.classList.remove('hidden');
           feedBtn.textContent = 'Hide Squad Feed';
         } catch {
@@ -358,37 +358,37 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     }
 
     if (embed.external?.uri) {
-      embedHtml += `<a href="${esc(embed.external.uri)}" target="_blank" rel="noopener noreferrer" class="mt-2 block rounded border border-zinc-700 overflow-hidden hover:border-zinc-500 transition">
+      embedHtml += `<a href="${esc(embed.external.uri)}" target="_blank" rel="noopener noreferrer" class="mt-2 block rounded border border-theme-border overflow-hidden hover:border-theme-border transition">
         ${embed.external.thumb ? `<img src="${esc(embed.external.thumb)}" alt="" class="w-full aspect-[2/1] object-cover" loading="lazy" onerror="this.style.display='none'" />` : ''}
         <div class="p-3">
-          <div class="text-sm font-medium text-zinc-200 line-clamp-1">${esc(embed.external.title || '')}</div>
+          <div class="text-sm font-medium text-theme-text line-clamp-1">${esc(embed.external.title || '')}</div>
         </div>
       </a>`;
     }
 
     if (embed.quote?.text) {
-      embedHtml += `<div class="mt-2 rounded border border-zinc-700 p-3 bg-zinc-800/50">
-        <div class="text-xs text-zinc-400 mb-1">
-          <span class="font-medium text-zinc-300">${esc(embed.quote.author)}</span>
-          <span class="text-zinc-500 ml-1">@${esc(embed.quote.handle)}</span>
+      embedHtml += `<div class="mt-2 rounded border border-theme-border p-3 bg-theme-surface">
+        <div class="text-xs text-theme-muted mb-1">
+          <span class="font-medium text-theme-text">${esc(embed.quote.author)}</span>
+          <span class="text-theme-faint ml-1">@${esc(embed.quote.handle)}</span>
         </div>
-        <p class="text-sm text-zinc-300 line-clamp-3">${esc(embed.quote.text)}</p>
+        <p class="text-sm text-theme-text line-clamp-3">${esc(embed.quote.text)}</p>
       </div>`;
     }
 
     return `
-    <article class="rounded-lg border border-zinc-800 bg-zinc-900/50 p-4">
+    <article class="rounded-lg border border-theme-card-border bg-theme-card/50 p-4">
       <div class="flex items-center gap-2 mb-2">
         ${post.author.avatar ? `<img src="${esc(post.author.avatar)}" class="h-8 w-8 rounded-full" />` : ''}
         <div>
           <span class="text-sm font-medium">${esc(post.author.displayName)}</span>
-          <span class="text-xs text-zinc-500 ml-1">@${esc(post.author.handle)}</span>
+          <span class="text-xs text-theme-faint ml-1">@${esc(post.author.handle)}</span>
         </div>
-        <time class="text-xs text-zinc-500 ml-auto">${timeAgo(post.pubDate)}</time>
+        <time class="text-xs text-theme-faint ml-auto">${timeAgo(post.pubDate)}</time>
       </div>
       ${post.text ? `<p class="text-sm whitespace-pre-wrap">${esc(post.text)}</p>` : ''}
       ${embedHtml}
-      <div class="mt-2 flex items-center gap-3 text-xs text-zinc-500">
+      <div class="mt-2 flex items-center gap-3 text-xs text-theme-faint">
         <span>♡ ${post.likeCount}</span>
         <span>🔁 ${post.repostCount}</span>
         <span>💬 ${post.replyCount}</span>

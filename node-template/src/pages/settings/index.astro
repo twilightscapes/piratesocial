@@ -10,23 +10,23 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     <h1 class="text-2xl font-bold mb-8">Settings</h1>
 
     <div class="space-y-3">
-      <a href={`${base}/settings/feeds/`} class="block rounded-lg border border-zinc-800 bg-zinc-900 p-5 hover:border-zinc-600 transition group">
+      <a href={`${base}/settings/feeds/`} class="block rounded-lg border border-theme-card-border bg-theme-card p-5 hover:border-theme-card-hover transition group">
         <div class="flex items-center justify-between">
           <div>
-            <h2 class="font-semibold group-hover:text-white transition">RSS Feeds</h2>
-            <p class="text-sm text-zinc-400 mt-1">Subscribe to external RSS feeds and see updates in your timeline</p>
+            <h2 class="font-semibold group-hover:text-theme-text transition">RSS Feeds</h2>
+            <p class="text-sm text-theme-muted mt-1">Subscribe to external RSS feeds and see updates in your timeline</p>
           </div>
-          <span class="text-zinc-500 group-hover:text-zinc-300 transition">→</span>
+          <span class="text-theme-faint group-hover:text-theme-muted transition">→</span>
         </div>
       </a>
 
-      <a href={`${base}/settings/bluesky/`} class="block rounded-lg border border-zinc-800 bg-zinc-900 p-5 hover:border-zinc-600 transition group">
+      <a href={`${base}/settings/bluesky/`} class="block rounded-lg border border-theme-card-border bg-theme-card p-5 hover:border-theme-card-hover transition group">
         <div class="flex items-center justify-between">
           <div>
-            <h2 class="font-semibold group-hover:text-white transition">Bluesky</h2>
-            <p class="text-sm text-zinc-400 mt-1">Connect your Bluesky account to cross-post photos</p>
+            <h2 class="font-semibold group-hover:text-theme-text transition">Bluesky</h2>
+            <p class="text-sm text-theme-muted mt-1">Connect your Bluesky account to cross-post photos</p>
           </div>
-          <span class="text-zinc-500 group-hover:text-zinc-300 transition">→</span>
+          <span class="text-theme-faint group-hover:text-theme-muted transition">→</span>
         </div>
       </a>
 

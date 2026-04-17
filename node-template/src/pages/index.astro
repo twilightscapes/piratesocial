@@ -17,16 +17,16 @@ const posts = (await getCollection('posts'))
     <img
       src={siteConfig.avatar}
       alt={siteConfig.author}
-      class="h-32 w-32 rounded-full border-2 border-zinc-700 object-cover"
+      class="h-32 w-32 rounded-full border-2 border-theme-border object-cover"
     />
     <div class="mt-4 md:mt-0">
-      <h1 class="text-3xl font-bold">{siteConfig.author}</h1>
-      <p class="mt-2 max-w-lg text-zinc-400">{siteConfig.bio}</p>
+      <h1 class="text-3xl font-bold font-heading">{siteConfig.author}</h1>
+      <p class="mt-2 max-w-lg text-theme-muted">{siteConfig.bio}</p>
       {siteConfig.camera && (
-        <p class="mt-1 text-sm text-zinc-500">📷 {siteConfig.camera}</p>
+        <p class="mt-1 text-sm text-theme-faint">📷 {siteConfig.camera}</p>
       )}
       {siteConfig.location && (
-        <p class="mt-1 text-sm text-zinc-500">📍 {siteConfig.location}</p>
+        <p class="mt-1 text-sm text-theme-faint">📍 {siteConfig.location}</p>
       )}
     </div>
   </section>
@@ -38,7 +38,7 @@ const posts = (await getCollection('posts'))
       {posts.map((post) => (
         <a
           href={`${base}/posts/${cleanSlug(post.id)}`}
-          class="group overflow-hidden rounded-lg border border-zinc-800 bg-zinc-900 transition hover:border-zinc-600"
+          class="group overflow-hidden rounded-lg border border-theme-card-border bg-theme-card transition hover:border-theme-card-hover"
         >
           {post.data.image && (
             <div class="aspect-[4/3] overflow-hidden">
@@ -52,13 +52,13 @@ const posts = (await getCollection('posts'))
           )}
           <div class="p-4">
             <h3 class="font-medium">{post.data.title}</h3>
-            <time class="mt-1 text-xs text-zinc-500" datetime={post.data.pubDate.toISOString()}>
+            <time class="mt-1 text-xs text-theme-faint" datetime={post.data.pubDate.toISOString()}>
               {post.data.pubDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
             </time>
             {post.data.tags.length > 0 && (
               <div class="mt-2 flex flex-wrap gap-1">
                 {post.data.tags.slice(0, 3).map(tag => (
-                  <span class="rounded bg-zinc-800 px-2 py-0.5 text-xs text-zinc-400">{tag}</span>
+                  <span class="rounded bg-theme-tag px-2 py-0.5 text-xs text-theme-tag-text">{tag}</span>
                 ))}
               </div>
             )}
@@ -67,7 +67,7 @@ const posts = (await getCollection('posts'))
       ))}
     </div>
     <div class="mt-8 text-center">
-      <a href={`${base}/posts`} class="text-sm text-zinc-400 underline hover:text-white">View all posts →</a>
+      <a href={`${base}/posts`} class="text-sm text-theme-muted underline hover:text-theme-text">View all posts →</a>
     </div>
   </section>
 </BaseLayout>

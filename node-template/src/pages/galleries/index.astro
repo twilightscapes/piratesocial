@@ -14,7 +14,7 @@ const galleries = (await getCollection('galleries'))
     {galleries.map((gallery) => (
       <a
         href={`${base}/galleries/${gallery.id.replace(/\.(md|mdx)$/, '')}`}
-        class="group overflow-hidden rounded-lg border border-zinc-800 bg-zinc-900 transition hover:border-zinc-600"
+        class="group overflow-hidden rounded-lg border border-theme-card-border bg-theme-card transition hover:border-theme-card-hover"
       >
         {gallery.data.coverImage && (
           <div class="aspect-video overflow-hidden">
@@ -28,9 +28,9 @@ const galleries = (await getCollection('galleries'))
         )}
         <div class="p-4">
           <h3 class="font-medium">{gallery.data.title}</h3>
-          <p class="mt-1 text-sm text-zinc-400">{gallery.data.photos.length} photos</p>
+          <p class="mt-1 text-sm text-theme-muted">{gallery.data.photos.length} photos</p>
           {gallery.data.description && (
-            <p class="mt-1 text-sm text-zinc-500 line-clamp-2">{gallery.data.description}</p>
+            <p class="mt-1 text-sm text-theme-faint line-clamp-2">{gallery.data.description}</p>
           )}
         </div>
       </a>

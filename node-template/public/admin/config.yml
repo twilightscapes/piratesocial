@@ -99,3 +99,159 @@ collections:
           - { label: Avatar, name: avatar, widget: image }
           - { label: Location, name: location, widget: string, required: false }
           - { label: Camera, name: camera, widget: string, required: false }
+
+      - label: Theme
+        name: theme
+        file: src/data/theme.json
+        fields:
+          - label: Fonts
+            name: fonts
+            widget: object
+            collapsed: false
+            fields:
+              - label: Heading Font
+                name: heading
+                widget: select
+                options:
+                  - { label: "System Default", value: "system-ui, -apple-system, sans-serif" }
+                  - { label: "Inter", value: "'Inter', sans-serif" }
+                  - { label: "Roboto", value: "'Roboto', sans-serif" }
+                  - { label: "Open Sans", value: "'Open Sans', sans-serif" }
+                  - { label: "Lato", value: "'Lato', sans-serif" }
+                  - { label: "Montserrat", value: "'Montserrat', sans-serif" }
+                  - { label: "Poppins", value: "'Poppins', sans-serif" }
+                  - { label: "Nunito", value: "'Nunito', sans-serif" }
+                  - { label: "Raleway", value: "'Raleway', sans-serif" }
+                  - { label: "Work Sans", value: "'Work Sans', sans-serif" }
+                  - { label: "DM Sans", value: "'DM Sans', sans-serif" }
+                  - { label: "Source Sans 3", value: "'Source Sans 3', sans-serif" }
+                  - { label: "Outfit", value: "'Outfit', sans-serif" }
+                  - { label: "Plus Jakarta Sans", value: "'Plus Jakarta Sans', sans-serif" }
+                  - { label: "Space Grotesk", value: "'Space Grotesk', sans-serif" }
+                  - { label: "Manrope", value: "'Manrope', sans-serif" }
+                  - { label: "Figtree", value: "'Figtree', sans-serif" }
+                  - { label: "Rubik", value: "'Rubik', sans-serif" }
+                  - { label: "Karla", value: "'Karla', sans-serif" }
+                  - { label: "Barlow", value: "'Barlow', sans-serif" }
+                  - { label: "Jost", value: "'Jost', sans-serif" }
+                  - { label: "Merriweather", value: "'Merriweather', serif" }
+                  - { label: "Playfair Display", value: "'Playfair Display', serif" }
+                  - { label: "Lora", value: "'Lora', serif" }
+                  - { label: "Libre Baskerville", value: "'Libre Baskerville', serif" }
+                  - { label: "Crimson Text", value: "'Crimson Text', serif" }
+                  - { label: "Source Serif 4", value: "'Source Serif 4', serif" }
+                  - { label: "Cormorant Garamond", value: "'Cormorant Garamond', serif" }
+                  - { label: "EB Garamond", value: "'EB Garamond', serif" }
+                  - { label: "Bitter", value: "'Bitter', serif" }
+                  - { label: "Noto Serif", value: "'Noto Serif', serif" }
+                  - { label: "Oswald", value: "'Oswald', sans-serif" }
+                  - { label: "Bebas Neue", value: "'Bebas Neue', sans-serif" }
+                  - { label: "Abril Fatface", value: "'Abril Fatface', serif" }
+                default: "system-ui, -apple-system, sans-serif"
+              - label: Body Font
+                name: body
+                widget: select
+                options:
+                  - { label: "System Default", value: "system-ui, -apple-system, sans-serif" }
+                  - { label: "Inter", value: "'Inter', sans-serif" }
+                  - { label: "Roboto", value: "'Roboto', sans-serif" }
+                  - { label: "Open Sans", value: "'Open Sans', sans-serif" }
+                  - { label: "Lato", value: "'Lato', sans-serif" }
+                  - { label: "Montserrat", value: "'Montserrat', sans-serif" }
+                  - { label: "Poppins", value: "'Poppins', sans-serif" }
+                  - { label: "Nunito", value: "'Nunito', sans-serif" }
+                  - { label: "Raleway", value: "'Raleway', sans-serif" }
+                  - { label: "Work Sans", value: "'Work Sans', sans-serif" }
+                  - { label: "DM Sans", value: "'DM Sans', sans-serif" }
+                  - { label: "Source Sans 3", value: "'Source Sans 3', sans-serif" }
+                  - { label: "Outfit", value: "'Outfit', sans-serif" }
+                  - { label: "Plus Jakarta Sans", value: "'Plus Jakarta Sans', sans-serif" }
+                  - { label: "Space Grotesk", value: "'Space Grotesk', sans-serif" }
+                  - { label: "Manrope", value: "'Manrope', sans-serif" }
+                  - { label: "Figtree", value: "'Figtree', sans-serif" }
+                  - { label: "Rubik", value: "'Rubik', sans-serif" }
+                  - { label: "Karla", value: "'Karla', sans-serif" }
+                  - { label: "Barlow", value: "'Barlow', sans-serif" }
+                  - { label: "Jost", value: "'Jost', sans-serif" }
+                  - { label: "Merriweather", value: "'Merriweather', serif" }
+                  - { label: "Playfair Display", value: "'Playfair Display', serif" }
+                  - { label: "Lora", value: "'Lora', serif" }
+                  - { label: "Libre Baskerville", value: "'Libre Baskerville', serif" }
+                  - { label: "Crimson Text", value: "'Crimson Text', serif" }
+                  - { label: "Source Serif 4", value: "'Source Serif 4', serif" }
+                  - { label: "Cormorant Garamond", value: "'Cormorant Garamond', serif" }
+                  - { label: "EB Garamond", value: "'EB Garamond', serif" }
+                  - { label: "Bitter", value: "'Bitter', serif" }
+                  - { label: "Noto Serif", value: "'Noto Serif', serif" }
+                default: "system-ui, -apple-system, sans-serif"
+              - label: Monospace Font
+                name: mono
+                widget: select
+                options:
+                  - { label: "System Mono", value: "ui-monospace, monospace" }
+                  - { label: "JetBrains Mono", value: "'JetBrains Mono', monospace" }
+                  - { label: "Fira Code", value: "'Fira Code', monospace" }
+                  - { label: "Source Code Pro", value: "'Source Code Pro', monospace" }
+                  - { label: "IBM Plex Mono", value: "'IBM Plex Mono', monospace" }
+                  - { label: "Space Mono", value: "'Space Mono', monospace" }
+                default: "ui-monospace, monospace"
+              - label: "Heading Size Scale (0.8 = smaller, 1 = default, 1.3 = larger)"
+                name: headingSize
+                widget: string
+                default: "1"
+              - label: "Body Size Scale (0.8 = smaller, 1 = default, 1.2 = larger)"
+                name: bodySize
+                widget: string
+                default: "1"
+
+          - label: "Light Mode Colors"
+            name: light
+            widget: object
+            collapsed: false
+            fields:
+              - { label: "Background", name: background, widget: color, enableAlpha: true, default: "rgba(255, 255, 255, 1)" }
+              - { label: "Surface (cards)", name: surface, widget: color, enableAlpha: true, default: "rgba(255, 255, 255, 1)" }
+              - { label: "Surface Border", name: surfaceBorder, widget: color, enableAlpha: true, default: "rgba(228, 228, 231, 1)" }
+              - { label: "Surface Hover", name: surfaceHover, widget: color, enableAlpha: true, default: "rgba(244, 244, 245, 1)" }
+              - { label: "Text", name: text, widget: color, enableAlpha: true, default: "rgba(24, 24, 27, 1)" }
+              - { label: "Text Muted", name: textMuted, widget: color, enableAlpha: true, default: "rgba(82, 82, 91, 1)" }
+              - { label: "Text Faint", name: textFaint, widget: color, enableAlpha: true, default: "rgba(113, 113, 122, 1)" }
+              - { label: "Primary (links, buttons)", name: primary, widget: color, enableAlpha: true, default: "rgba(59, 130, 246, 1)" }
+              - { label: "Primary Hover", name: primaryHover, widget: color, enableAlpha: true, default: "rgba(37, 99, 235, 1)" }
+              - { label: "Accent", name: accent, widget: color, enableAlpha: true, default: "rgba(139, 92, 246, 1)" }
+              - { label: "Border", name: border, widget: color, enableAlpha: true, default: "rgba(228, 228, 231, 1)" }
+              - { label: "Input Background", name: inputBg, widget: color, enableAlpha: true, default: "rgba(244, 244, 245, 1)" }
+              - { label: "Input Border", name: inputBorder, widget: color, enableAlpha: true, default: "rgba(212, 212, 216, 1)" }
+              - { label: "Tag Background", name: tag, widget: color, enableAlpha: true, default: "rgba(244, 244, 245, 1)" }
+              - { label: "Tag Text", name: tagText, widget: color, enableAlpha: true, default: "rgba(82, 82, 91, 1)" }
+              - { label: "Card Background", name: cardBg, widget: color, enableAlpha: true, default: "rgba(255, 255, 255, 1)" }
+              - { label: "Card Border", name: cardBorder, widget: color, enableAlpha: true, default: "rgba(228, 228, 231, 1)" }
+              - { label: "Card Hover Border", name: cardHover, widget: color, enableAlpha: true, default: "rgba(212, 212, 216, 1)" }
+              - { label: "Header Background", name: headerBg, widget: color, enableAlpha: true, default: "rgba(255, 255, 255, 1)" }
+              - { label: "Footer Background", name: footerBg, widget: color, enableAlpha: true, default: "rgba(255, 255, 255, 1)" }
+
+          - label: "Dark Mode Colors"
+            name: dark
+            widget: object
+            collapsed: false
+            fields:
+              - { label: "Background", name: background, widget: color, enableAlpha: true, default: "rgba(9, 9, 11, 1)" }
+              - { label: "Surface (cards)", name: surface, widget: color, enableAlpha: true, default: "rgba(24, 24, 27, 1)" }
+              - { label: "Surface Border", name: surfaceBorder, widget: color, enableAlpha: true, default: "rgba(39, 39, 42, 1)" }
+              - { label: "Surface Hover", name: surfaceHover, widget: color, enableAlpha: true, default: "rgba(39, 39, 42, 1)" }
+              - { label: "Text", name: text, widget: color, enableAlpha: true, default: "rgba(244, 244, 245, 1)" }
+              - { label: "Text Muted", name: textMuted, widget: color, enableAlpha: true, default: "rgba(161, 161, 170, 1)" }
+              - { label: "Text Faint", name: textFaint, widget: color, enableAlpha: true, default: "rgba(113, 113, 122, 1)" }
+              - { label: "Primary (links, buttons)", name: primary, widget: color, enableAlpha: true, default: "rgba(59, 130, 246, 1)" }
+              - { label: "Primary Hover", name: primaryHover, widget: color, enableAlpha: true, default: "rgba(96, 165, 250, 1)" }
+              - { label: "Accent", name: accent, widget: color, enableAlpha: true, default: "rgba(139, 92, 246, 1)" }
+              - { label: "Border", name: border, widget: color, enableAlpha: true, default: "rgba(39, 39, 42, 1)" }
+              - { label: "Input Background", name: inputBg, widget: color, enableAlpha: true, default: "rgba(39, 39, 42, 1)" }
+              - { label: "Input Border", name: inputBorder, widget: color, enableAlpha: true, default: "rgba(63, 63, 70, 1)" }
+              - { label: "Tag Background", name: tag, widget: color, enableAlpha: true, default: "rgba(39, 39, 42, 1)" }
+              - { label: "Tag Text", name: tagText, widget: color, enableAlpha: true, default: "rgba(161, 161, 170, 1)" }
+              - { label: "Card Background", name: cardBg, widget: color, enableAlpha: true, default: "rgba(24, 24, 27, 1)" }
+              - { label: "Card Border", name: cardBorder, widget: color, enableAlpha: true, default: "rgba(39, 39, 42, 1)" }
+              - { label: "Card Hover Border", name: cardHover, widget: color, enableAlpha: true, default: "rgba(63, 63, 70, 1)" }
+              - { label: "Header Background", name: headerBg, widget: color, enableAlpha: true, default: "rgba(9, 9, 11, 1)" }
+              - { label: "Footer Background", name: footerBg, widget: color, enableAlpha: true, default: "rgba(9, 9, 11, 1)" }

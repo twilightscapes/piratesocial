@@ -1,5 +1,6 @@
 ---
 import { siteConfig } from '../lib/config';
+import theme from '../data/theme.json';
 
 interface Props {
   title?: string;
@@ -12,6 +13,29 @@ const pageTitle = title ? `${title} | ${siteConfig.title}` : siteConfig.title;
 const pageDescription = description || siteConfig.description;
 const ogImage = image || siteConfig.avatar;
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+// Extract Google Font family names from CSS font-family strings
+function extractGoogleFont(cssValue: string): string | null {
+  const m = cssValue.match(/^'([^']+)'/);
+  return m ? m[1] : null;
+}
+
+const fontFamilies = new Set<string>();
+[theme.fonts.heading, theme.fonts.body, theme.fonts.mono].forEach(v => {
+  const name = extractGoogleFont(v);
+  if (name) fontFamilies.add(name);
+});
+
+const googleFontsUrl = fontFamilies.size
+  ? `https://fonts.googleapis.com/css2?${[...fontFamilies].map(f => `family=${f.replace(/ /g, '+')}:wght@300;400;500;600;700`).join('&')}&display=swap`
+  : null;
+
+// Build CSS custom property blocks
+const lt = theme.light;
+const dk = theme.dark;
+const lightVars = `--ps-bg:${lt.background};--ps-surface:${lt.surface};--ps-surface-border:${lt.surfaceBorder};--ps-surface-hover:${lt.surfaceHover};--ps-text:${lt.text};--ps-text-muted:${lt.textMuted};--ps-text-faint:${lt.textFaint};--ps-primary:${lt.primary};--ps-primary-hover:${lt.primaryHover};--ps-accent:${lt.accent};--ps-border:${lt.border};--ps-input-bg:${lt.inputBg};--ps-input-border:${lt.inputBorder};--ps-tag:${lt.tag};--ps-tag-text:${lt.tagText};--ps-card-bg:${lt.cardBg};--ps-card-border:${lt.cardBorder};--ps-card-hover:${lt.cardHover};--ps-header-bg:${lt.headerBg};--ps-footer-bg:${lt.footerBg}`;
+const darkVars = `--ps-bg:${dk.background};--ps-surface:${dk.surface};--ps-surface-border:${dk.surfaceBorder};--ps-surface-hover:${dk.surfaceHover};--ps-text:${dk.text};--ps-text-muted:${dk.textMuted};--ps-text-faint:${dk.textFaint};--ps-primary:${dk.primary};--ps-primary-hover:${dk.primaryHover};--ps-accent:${dk.accent};--ps-border:${dk.border};--ps-input-bg:${dk.inputBg};--ps-input-border:${dk.inputBorder};--ps-tag:${dk.tag};--ps-tag-text:${dk.tagText};--ps-card-bg:${dk.cardBg};--ps-card-border:${dk.cardBorder};--ps-card-hover:${dk.cardHover};--ps-header-bg:${dk.headerBg};--ps-footer-bg:${dk.footerBg}`;
+const fontVars = `--ps-font-heading:${theme.fonts.heading};--ps-font-body:${theme.fonts.body};--ps-font-mono:${theme.fonts.mono};--ps-heading-scale:${theme.fonts.headingSize || '1'};--ps-body-scale:${theme.fonts.bodySize || '1'}`;
 ---
 
 <!doctype html>
@@ -38,6 +62,17 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     <link rel="apple-touch-icon" href={`${base}/images/icon192.png`} />
     <link rel="manifest" href={`${base}/manifest.json`} />
     <meta name="theme-color" content="#09090b" id="meta-theme-color" />
+
+    <!-- Google Fonts -->
+    {googleFontsUrl && (
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+      <link rel="stylesheet" href={googleFontsUrl} />
+    )}
+
+    <!-- Theme CSS custom properties -->
+    <style set:html={`:root{${lightVars};${fontVars}}.dark{${darkVars}}`}></style>
+
     <script is:inline>
       (function() {
         const saved = localStorage.getItem('ps_theme');
@@ -48,19 +83,19 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       })();
     </script>
   </head>
-  <body class="min-h-screen bg-white text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100 antialiased transition-colors duration-200">
-    <header class="border-b border-zinc-200 dark:border-zinc-800">
+  <body class="min-h-screen bg-theme-bg text-theme-text font-body antialiased transition-colors duration-200" style={`font-size:calc(1rem * ${theme.fonts.bodySize || '1'})`}>
+    <header class="border-b border-theme-border bg-theme-header">
       <nav class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
         <a href={`${base}/`} class="flex items-center">
           <img src={`${base}/images/logoImage.svg`} alt={siteConfig.title} class="h-8" />
         </a>
         <div class="flex items-center gap-6 text-sm">
-          <a href={`${base}/posts`} class="text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white transition">Posts</a>
-          <a href={`${base}/galleries`} class="text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white transition">Galleries</a>
-          <a href={`${base}/social`} class="text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white transition">Social</a>
-          <a href={`${base}/settings`} class="text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white transition">Settings</a>
-          <a href={`${base}/about`} class="text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white transition">About</a>
-          <button id="auth-btn" class="rounded bg-zinc-200 dark:bg-zinc-800 px-3 py-1.5 text-xs hover:bg-zinc-300 dark:hover:bg-zinc-700 transition">
+          <a href={`${base}/posts`} class="text-theme-muted hover:text-theme-text transition">Posts</a>
+          <a href={`${base}/galleries`} class="text-theme-muted hover:text-theme-text transition">Galleries</a>
+          <a href={`${base}/social`} class="text-theme-muted hover:text-theme-text transition">Social</a>
+          <a href={`${base}/settings`} class="text-theme-muted hover:text-theme-text transition">Settings</a>
+          <a href={`${base}/about`} class="text-theme-muted hover:text-theme-text transition">About</a>
+          <button id="auth-btn" class="rounded bg-theme-surface-hover px-3 py-1.5 text-xs hover:bg-theme-card-hover transition">
             Sign In
           </button>
         </div>
@@ -72,14 +107,14 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     </main>
 
     <!-- Theme toggle -->
-    <button id="theme-toggle" class="fixed bottom-4 left-4 z-50 rounded-full p-2.5 bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-300 dark:hover:bg-zinc-700 transition shadow-lg border border-zinc-300 dark:border-zinc-700" aria-label="Toggle theme">
+    <button id="theme-toggle" class="fixed bottom-4 left-4 z-50 rounded-full p-2.5 bg-theme-surface-hover text-theme-muted hover:bg-theme-card-hover transition shadow-lg border border-theme-border" aria-label="Toggle theme">
       <svg id="theme-icon-sun" class="w-5 h-5 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
       <svg id="theme-icon-moon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/></svg>
     </button>
 
-    <footer class="border-t border-zinc-200 dark:border-zinc-800 mt-16">
-      <div class="mx-auto max-w-6xl px-4 py-8 text-center text-sm text-zinc-500">
-        <p>Powered by <a href="https://github.com/piratesocial" class="underline hover:text-white">Pirate Social</a></p>
+    <footer class="border-t border-theme-border bg-theme-footer mt-16">
+      <div class="mx-auto max-w-6xl px-4 py-8 text-center text-sm text-theme-faint">
+        <p>Powered by <a href="https://github.com/piratesocial" class="underline hover:text-theme-text">Pirate Social</a></p>
         <p class="mt-1">Part of the distributed photography network &middot; <a href={`${base}/feed.xml`} class="underline">RSS</a></p>
       </div>
     </footer>

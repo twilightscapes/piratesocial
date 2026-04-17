@@ -9,43 +9,43 @@ import { siteConfig } from '../lib/config';
       <img
         src={siteConfig.avatar}
         alt={siteConfig.author}
-        class="h-40 w-40 rounded-full border-2 border-zinc-700 object-cover"
+        class="h-40 w-40 rounded-full border-2 border-theme-border object-cover"
       />
-      <h1 class="mt-6 text-3xl font-bold">{siteConfig.author}</h1>
-      <p class="mt-3 text-lg text-zinc-400">{siteConfig.bio}</p>
+      <h1 class="mt-6 text-3xl font-bold font-heading">{siteConfig.author}</h1>
+      <p class="mt-3 text-lg text-theme-muted">{siteConfig.bio}</p>
 
-      <div class="mt-6 flex flex-wrap justify-center gap-4 text-sm text-zinc-500">
+      <div class="mt-6 flex flex-wrap justify-center gap-4 text-sm text-theme-faint">
         {siteConfig.location && <span>📍 {siteConfig.location}</span>}
         {siteConfig.camera && <span>📷 {siteConfig.camera}</span>}
       </div>
 
       <div class="mt-6 flex gap-4">
         {siteConfig.social.github && (
-          <a href={`https://github.com/${siteConfig.social.github}`} class="text-zinc-400 hover:text-white transition" target="_blank">
+          <a href={`https://github.com/${siteConfig.social.github}`} class="text-theme-muted hover:text-theme-text transition" target="_blank">
             GitHub
           </a>
         )}
         {siteConfig.social.instagram && (
-          <a href={`https://instagram.com/${siteConfig.social.instagram}`} class="text-zinc-400 hover:text-white transition" target="_blank">
+          <a href={`https://instagram.com/${siteConfig.social.instagram}`} class="text-theme-muted hover:text-theme-text transition" target="_blank">
             Instagram
           </a>
         )}
         {siteConfig.social.mastodon && (
-          <a href={siteConfig.social.mastodon} class="text-zinc-400 hover:text-white transition" target="_blank">
+          <a href={siteConfig.social.mastodon} class="text-theme-muted hover:text-theme-text transition" target="_blank">
             Mastodon
           </a>
         )}
       </div>
 
-      <div class="mt-8 rounded-lg border border-zinc-800 bg-zinc-900 p-6 text-left w-full">
+      <div class="mt-8 rounded-lg border border-theme-card-border bg-theme-card p-6 text-left w-full">
         <h2 class="text-lg font-semibold mb-3">About This Site</h2>
-        <p class="text-zinc-400 text-sm leading-relaxed">
-          This is a node on the <strong class="text-white">Pirate Social</strong> network — a distributed
+        <p class="text-theme-muted text-sm leading-relaxed">
+          This is a node on the <strong class="text-theme-text">Pirate Social</strong> network — a distributed
           photography platform where every photographer owns their own site and content. Sites connect
           through RSS feeds and a shared hub, creating a decentralized social experience.
         </p>
-        <p class="mt-3 text-zinc-400 text-sm leading-relaxed">
-          Want your own node? <a href="https://github.com/piratesocial" class="underline hover:text-white">Get started on GitHub</a>.
+        <p class="mt-3 text-theme-muted text-sm leading-relaxed">
+          Want your own node? <a href="https://github.com/piratesocial" class="underline hover:text-theme-text">Get started on GitHub</a>.
         </p>
       </div>
     </div>

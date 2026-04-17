@@ -16,49 +16,49 @@ const hasData = Object.values(exif).some(v => v);
 ---
 
 {hasData && (
-  <div class="my-6 rounded-lg border border-zinc-800 bg-zinc-900 p-4">
-    <h3 class="mb-3 text-sm font-semibold text-zinc-300 uppercase tracking-wider">EXIF Data</h3>
+  <div class="my-6 rounded-lg border border-theme-card-border bg-theme-card p-4">
+    <h3 class="mb-3 text-sm font-semibold text-theme-muted uppercase tracking-wider">EXIF Data</h3>
     <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 text-sm">
       {exif.camera && (
         <div>
-          <span class="text-zinc-500">Camera</span>
-          <p class="text-zinc-200">{exif.camera}</p>
+          <span class="text-theme-faint">Camera</span>
+          <p class="text-theme-text">{exif.camera}</p>
         </div>
       )}
       {exif.lens && (
         <div>
-          <span class="text-zinc-500">Lens</span>
-          <p class="text-zinc-200">{exif.lens}</p>
+          <span class="text-theme-faint">Lens</span>
+          <p class="text-theme-text">{exif.lens}</p>
         </div>
       )}
       {exif.focalLength && (
         <div>
-          <span class="text-zinc-500">Focal Length</span>
-          <p class="text-zinc-200">{exif.focalLength}</p>
+          <span class="text-theme-faint">Focal Length</span>
+          <p class="text-theme-text">{exif.focalLength}</p>
         </div>
       )}
       {exif.aperture && (
         <div>
-          <span class="text-zinc-500">Aperture</span>
-          <p class="text-zinc-200">f/{exif.aperture}</p>
+          <span class="text-theme-faint">Aperture</span>
+          <p class="text-theme-text">f/{exif.aperture}</p>
         </div>
       )}
       {exif.shutterSpeed && (
         <div>
-          <span class="text-zinc-500">Shutter Speed</span>
-          <p class="text-zinc-200">{exif.shutterSpeed}</p>
+          <span class="text-theme-faint">Shutter Speed</span>
+          <p class="text-theme-text">{exif.shutterSpeed}</p>
         </div>
       )}
       {exif.iso && (
         <div>
-          <span class="text-zinc-500">ISO</span>
-          <p class="text-zinc-200">{exif.iso}</p>
+          <span class="text-theme-faint">ISO</span>
+          <p class="text-theme-text">{exif.iso}</p>
         </div>
       )}
       {exif.dateTaken && (
         <div>
-          <span class="text-zinc-500">Date Taken</span>
-          <p class="text-zinc-200">{exif.dateTaken}</p>
+          <span class="text-theme-faint">Date Taken</span>
+          <p class="text-theme-text">{exif.dateTaken}</p>
         </div>
       )}
     </div>
