@@ -90,6 +90,8 @@ function InteractivePlayer({ playlist, audioOnly, isFloating, heading, caption, 
   const handleNextRef = useRef(null);
   const lastAdvanceTimeRef = useRef(0);
   const currentRef = useRef(null);
+  const hasUserGesturedRef = useRef(false);  // Track if user has clicked/interacted
+  const isTouchDeviceRef = useRef(typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0));
 
   const hasPlaylist = playlist.length > 1;
   const current = playlist[currentIndex] || playlist[0];
@@ -107,7 +109,18 @@ function InteractivePlayer({ playlist, audioOnly, isFloating, heading, caption, 
   const onPlayerReady = useCallback((e) => {
     playerReadyRef.current = true;
     e.target.setVolume(volume);
-  }, []);
+    
+    // On mobile/touch with no gesture yet, start muted (auto-unmute after 1.5s)
+    if (isTouchDeviceRef.current && !hasUserGesturedRef.current) {
+      e.target.mute();
+      setTimeout(() => {
+        if (!hasUserGesturedRef.current) {
+          e.target.unMute();
+          hasUserGesturedRef.current = true;
+        }
+      }, 1500);
+    }
+  }, [volume]);
 
   const onPlayerStateChange = useCallback((e) => {
     if (e.data === window.YT.PlayerState.PLAYING) {
@@ -125,6 +138,10 @@ function InteractivePlayer({ playlist, audioOnly, isFloating, heading, caption, 
           setProgress(Math.max(0, t - cs));
           if (cur.endTime && t >= cur.endTime) {
             clearInterval(progressInterval.current);
+            // Auto-advance: Only auto-unmute if user has already gestured
+            if (hasUserGesturedRef.current && playerRef.current && playerRef.current.unMute) {
+              playerRef.current.unMute();
+            }
             handleNextRef.current?.();
           }
         }
@@ -158,13 +175,14 @@ function InteractivePlayer({ playlist, audioOnly, isFloating, heading, caption, 
         height: '100%',
         videoId: first.id,
         playerVars: {
-          autoplay: 0,
+          autoplay: 1,  // Enable autoplay BUT...
           controls: useNativeControls ? 1 : 0,
           modestbranding: 1,
           rel: 0,
           playsinline: 1,
           start: first.startTime || 0,
           end: first.endTime,
+          mute: 1,  // ...start MUTED to avoid ads. User gesture will unmute.
         },
         events: {
           onReady: onPlayerReady,
@@ -187,6 +205,8 @@ function InteractivePlayer({ playlist, audioOnly, isFloating, heading, caption, 
   }, []); // truly once
 
   // ── Load new video ONLY when currentIndex changes (skip first render) ──
+  // NOTE: On user gesture (click), we already load synchronously in the callback
+  // This effect handles other cases and ensures state consistency
   const isFirstRender = useRef(true);
   useEffect(() => {
     if (isFirstRender.current) {
@@ -198,6 +218,8 @@ function InteractivePlayer({ playlist, audioOnly, isFloating, heading, caption, 
     const track = playlist[currentIndex];
     if (!track) return;
 
+    // If user gestured recently, they already loaded via callback - just ensure player is set up
+    // Otherwise load now (e.g., programmatic index change)
     playerRef.current.loadVideoById({
       videoId: track.id,
       startSeconds: track.startTime || 0,
@@ -216,6 +238,14 @@ function InteractivePlayer({ playlist, audioOnly, isFloating, heading, caption, 
   const togglePlay = useCallback(() => {
     if (!playerRef.current) return;
     try {
+      // IMPORTANT: Mark gesture within the sync click context (before any async)
+      hasUserGesturedRef.current = true;
+      
+      // Unmute synchronously in this gesture context
+      if (playerRef.current.unMute) {
+        playerRef.current.unMute();
+      }
+      
       const state = playerRef.current.getPlayerState();
       if (state === 1) { // YT.PlayerState.PLAYING
         playerRef.current.pauseVideo();
@@ -226,14 +256,51 @@ function InteractivePlayer({ playlist, audioOnly, isFloating, heading, caption, 
     } catch (e) { /* player not ready */ }
   }, []); // no deps — reads player state directly
 
-  const skipTo = useCallback((idx) => setCurrentIndex(idx), []);
+  const skipTo = useCallback((idx) => {
+    // IMPORTANT: Handle unmute + load synchronously during the click gesture
+    if (playerRef.current && playerReadyRef.current) {
+      hasUserGesturedRef.current = true;
+      
+      // Unmute synchronously (in gesture context)
+      if (playerRef.current.unMute) {
+        playerRef.current.unMute();
+      }
+      
+      // Load video synchronously
+      const track = playlist[idx];
+      if (track) {
+        playerRef.current.loadVideoById({
+          videoId: track.id,
+          startSeconds: track.startTime || 0,
+          endSeconds: track.endTime,
+        });
+      }
+    }
+    
+    // Update state asynchronously (gesture context already recorded)
+    setCurrentIndex(idx);
+  }, [playlist]);
 
   const prevTrack = useCallback(() => {
-    setCurrentIndex((prev) => (prev > 0 ? prev - 1 : playlist.length - 1));
+    hasUserGesturedRef.current = true;
+    setCurrentIndex((prev) => {
+      const nextIdx = prev > 0 ? prev - 1 : playlist.length - 1;
+      if (playerRef.current && playerReadyRef.current && playerRef.current.unMute) {
+        playerRef.current.unMute();
+      }
+      return nextIdx;
+    });
   }, [playlist.length]);
 
   const nextTrack = useCallback(() => {
-    setCurrentIndex((prev) => (prev < playlist.length - 1 ? prev + 1 : 0));
+    hasUserGesturedRef.current = true;
+    setCurrentIndex((prev) => {
+      const nextIdx = prev < playlist.length - 1 ? prev + 1 : 0;
+      if (playerRef.current && playerReadyRef.current && playerRef.current.unMute) {
+        playerRef.current.unMute();
+      }
+      return nextIdx;
+    });
   }, [playlist.length]);
 
   useEffect(() => { handleNextRef.current = nextTrack; }, [nextTrack]);

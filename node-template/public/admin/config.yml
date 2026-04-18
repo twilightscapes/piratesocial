@@ -2,7 +2,7 @@ backend:
   name: github
   repo: twilightscapes/twilightscapes.github.io
   branch: main
-  base_url: https://piratesocial.app
+  base_url: https://piratesocial-hub.fly.dev
   auth_endpoint: /api/decap/auth
 
 site_url: https://twilightscapes.github.io

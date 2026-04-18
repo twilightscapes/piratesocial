@@ -17,7 +17,7 @@ import { resolve } from 'path';
 const rl = createInterface({ input: process.stdin, output: process.stdout });
 const ask = (q) => new Promise((r) => rl.question(q, r));
 
-const HUB_URL = 'https://piratesocial.app';
+const HUB_URL = 'https://piratesocial-hub.fly.dev';
 
 // Try to auto-detect the GitHub username from git remote
 function detectGitHubUser() {

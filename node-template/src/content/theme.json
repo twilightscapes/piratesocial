@@ -4,14 +4,14 @@
     "size": "cover",
     "position": "center center",
     "attachment": "fixed",
-    "blur": "4"
+    "blur": "0"
   },
   "fonts": {
     "heading": "'Figtree', sans-serif",
     "body": "'Lato', sans-serif",
     "mono": "ui-monospace, monospace",
     "headingSize": "1",
-    "bodySize": "1"
+    "bodySize": "1.2"
   },
   "light": {
     "footerBg": "rgba(255, 255, 255, 1)",
